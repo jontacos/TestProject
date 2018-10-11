@@ -1,0 +1,6 @@
+*.apk
+*.csproj
+*.sln
+/Library
+/Temp
+/Packages
