@@ -6,3 +6,8 @@
 /Library
 /Temp
 /Packages
+/Managed
+/obj
+/Mono
+*_Data/
+.vs/

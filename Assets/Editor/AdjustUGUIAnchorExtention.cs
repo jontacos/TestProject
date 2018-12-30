@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using UnityEditor;
-
-using System.Collections;
 using System.Linq;
 
-public static class AdjustAnchorExtention
+/// <summary>
+/// UGUIのアンカーをオブジェクトサイズに合わせる。
+/// ただし、localScaleの値がxy共に1のときのみ
+/// </summary>
+public static class AdjustUGUIAnchorExtention
 {
 	[MenuItem("Util/AdjustAnchor")]
 	static void FitAnchorsToTransform()
@@ -31,19 +33,17 @@ public static class AdjustAnchorExtention
 		if (parent == null)
             return;
 
-        var s = rectTransform.localScale.x + rectTransform.localScale.y;
-        if (s > 2.1f || s < 1.9f)
+        if(Mathf.RoundToInt(rectTransform.localScale.x * 1000f) != 1000 || Mathf.RoundToInt(rectTransform.localScale.y * 1000f) != 1000)
         {
-            Debug.LogError("UGUIオブジェクトのスケールが1じゃない");
+            Debug.LogError("UGUIオブジェクトのlocalScaleが1じゃない");
             return;
         }
 
+        var canvasWidth = parent.rect.width;
+        var canvasHeight = parent.rect.height;
 
-        var parentWidth = parent.rect.width;
-        var parentHeight = parent.rect.height;
-
-        var x = rectTransform.localPosition.x + parentWidth * 0.5f;
-        var y = rectTransform.localPosition.y + parentHeight * 0.5f;
+        var x = rectTransform.localPosition.x + canvasWidth * 0.5f;
+        var y = rectTransform.localPosition.y + canvasHeight * 0.5f;
         var w = rectTransform.rect.width;
         var h = rectTransform.rect.height;
         
@@ -51,8 +51,8 @@ public static class AdjustAnchorExtention
         var ly = y + h / 2;
         var rx = x + w / 2;
         var ry = y - h / 2;
-        var min = new Vector2(lx / parentWidth, ly / parentHeight);
-        var max = new Vector2(rx / parentWidth, ry / parentHeight);
+        var min = new Vector2(lx / canvasWidth, ly / canvasHeight);
+        var max = new Vector2(rx / canvasWidth, ry / canvasHeight);
         
         rectTransform.anchorMin = new Vector2(min.x, max.y);
         rectTransform.anchorMax = new Vector2(max.x, min.y);
@@ -60,6 +60,5 @@ public static class AdjustAnchorExtention
         // アンカーからの距離はゼロに設定
         rectTransform.offsetMin = Vector2.zero;
         rectTransform.offsetMax = Vector2.zero;
-
     }
 }

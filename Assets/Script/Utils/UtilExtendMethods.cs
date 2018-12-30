@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public static class Util
+public static class UtilExtendMethods
 {
-
-    #region 拡張メソッド
     // position
     public static Transform SetPositionX(this Transform t, float x)
     {
@@ -22,6 +18,22 @@ public static class Util
         t.position = new Vector3(t.position.x, t.position.y, z);
         return t;
     }
+    public static Transform AddPositionX(this Transform t, float x)
+    {
+        t.position = new Vector3(t.position.x + x, t.position.y, t.position.z);
+        return t;
+    }
+    public static Transform AddPositionY(this Transform t, float y)
+    {
+        t.position = new Vector3(t.position.x, t.position.y + y, t.position.z);
+        return t;
+    }
+    public static Transform AddPositionZ(this Transform t, float z)
+    {
+        t.position = new Vector3(t.position.x, t.position.y, t.position.z + z);
+        return t;
+    }
+
     public static Transform SetLocalPositionX(this Transform t, float x)
     {
         t.localPosition = new Vector3(x, t.position.y, t.position.z);
@@ -37,6 +49,22 @@ public static class Util
         t.localPosition = new Vector3(t.position.x, t.position.y, z);
         return t;
     }
+    public static Transform AddLocalPositionX(this Transform t, float x)
+    {
+        t.localPosition = new Vector3(t.position.x + x, t.position.y, t.position.z);
+        return t;
+    }
+    public static Transform AddLocalPositionY(this Transform t, float y)
+    {
+        t.localPosition = new Vector3(t.position.x, t.position.y + y, t.position.z);
+        return t;
+    }
+    public static Transform AddLocalPositionZ(this Transform t, float z)
+    {
+        t.localPosition = new Vector3(t.position.x, t.position.y, t.position.z + z);
+        return t;
+    }
+
     public static Transform SetPositionXY(this Transform t, float x, float y)
     {
         t.position = new Vector3(x, y, t.position.z);
@@ -47,6 +75,12 @@ public static class Util
         t.position = new Vector3(xy.x, xy.y, t.position.z);
         return t;
     }
+    public static Transform AddPositionXY(this Transform t, Vector2 xy)
+    {
+        t.position = new Vector3(t.position.x + xy.x, t.position.y + xy.y, t.position.z);
+        return t;
+    }
+
     public static Transform SetPositionYZ(this Transform t, float y, float z)
     {
         t.position = new Vector3(t.position.x, y, z);
@@ -138,5 +172,4 @@ public static class Util
         t.localScale = new Vector3(xy.x, xy.y, t.localScale.z);
         return t;
     }
-    #endregion
 }
