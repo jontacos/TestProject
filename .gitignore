@@ -2,6 +2,7 @@
 *.csproj
 *.sln
 *.zip
+*.dll
 /Library
 /Temp
 /Packages
