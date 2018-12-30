@@ -1,7 +1,7 @@
 *.apk
 *.csproj
 *.sln
-.zip
+*.zip
 /Library
 /Temp
 /Packages
