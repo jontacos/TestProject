@@ -83,7 +83,6 @@ public class AndroidCamera : MonoBehaviour
 
         RenderTexture.active = currentRT;
 
-
         // 書き換え用テクスチャ用配列の作成
         Color[] change_pixels = new Color[cols.Length];
         for (int i = 0; i < cols.Length; i++)

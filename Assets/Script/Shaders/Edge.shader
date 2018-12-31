@@ -1,25 +1,26 @@
-﻿Shader "Custom/BlackAndWhite"
+﻿Shader "Custom/Edge"
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		_MainTex("Texture", 2D) = "white" {}
 		_PosX("PosX", float) = 1
 		_PosY("PosY", float) = 1
 		_Color("Color", Color) = (1,1,1,1)
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType" = "Opaque" }
 		LOD 100
 
 		Pass
 		{
+			Blend SrcAlpha OneMinusSrcAlpha
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			// make fog work
 			#pragma multi_compile_fog
-			
+
 			#include "UnityCG.cginc"
 
 			struct appdata
@@ -45,7 +46,7 @@
 #define G_LUMINANCE 0.5
 #define B_LUMINANCE 0.5
 
-			v2f vert (appdata v)
+			v2f vert(appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
@@ -53,35 +54,21 @@
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
-			
-			fixed4 frag (v2f i) : SV_Target
+
+			fixed4 frag(v2f i) : SV_Target
 			{
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
+				float alpha = 1;
 				float x = abs(i.uv.x - _PosX);
 				float y = abs(i.uv.y - _PosY);
 				float v = col.x * R_LUMINANCE + col.y * G_LUMINANCE + col.z * B_LUMINANCE;
-			/*	if (v > 0.5)
-					v = 1.0f;
-				else
-					v = 0;*/
-
-				//if (x < 0.0045f && y < 0.008f) // 適当に16:9比率っぽく
-				//	v = 0.5f;
-				col = float4(v, v, v, 1);
-
-				///*float r = 1.0 - col.r;
-				//float g = 1.0 - col.g;
-				//float b = 1.0 - col.b;*/
-				////int r = col.r; int g = col.g; int b = col.b;
-				////col = float4(pow(r,2), pow(g, 2), pow(b, 2), 1);
-				////col = float4(r,g,b,1);
-
-				//// apply fog
-				////UNITY_APPLY_FOG(i.fogCoord, col);
+				if (v * 3 > 2.0f)
+					alpha = 0;
+				col = float4(v, v, v, alpha);
 				return col;
 			}
-			ENDCG
+		ENDCG
 		}
 	}
 }

@@ -46,7 +46,7 @@ namespace Jontacos
 
             TouchPosition = GetPosition();
 
-            Debug.Log("タッチ座標：" + TouchPosition);
+            //Debug.Log("タッチ座標：" + TouchPosition);
             return TouchPosition;
         }
 
@@ -88,8 +88,8 @@ namespace Jontacos
 #if UNITY_EDITOR
             return Input.mousePosition;
 #else
-        var touch = Input.GetTouch(0);
-        return touch.position;
+            var touch = Input.GetTouch(0);
+            return touch.position;
 #endif
         }
     }
