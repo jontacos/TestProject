@@ -6,18 +6,26 @@ using UnityEngine.UI;
 public class TextureWriter : MonoBehaviour
 {
 
-    public Texture2D Tex4Write;
     public Material Mat;
     public RawImage WriteRawImage;
     public RawImage EdgeTex;
 
     public GameObject Pointer;
     public GameObject View;
-    private Texture2D copiedTex;
+
+    enum ColorType
+    {
+        Erazer = 0,
+        Red,
+        Green,
+        Blue,
+        White,
+        Gray
+    }
 
     private class Brush
     {
-        private static Color[] ColorTypes = new Color[] { Color.clear, Color.red, Color.green, Color.blue, Color.yellow, Color.gray };
+        private static Color[] ColorTypes = new Color[] { Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.gray };
 
         public int Width = 8;
         public int Height = 8;
@@ -40,13 +48,15 @@ public class TextureWriter : MonoBehaviour
     }
     private Brush brush;
 
+    private Page writePage;
 
-	void Start ()
+
+    void Start ()
     {
         brush = new Brush();
         Mat = View.GetComponent<MeshRenderer>().material;
-        copiedTex = new Texture2D(Tex4Write.width, Tex4Write.height, TextureFormat.ARGB32, false);
-        copiedTex.LoadRawTextureData(Tex4Write.GetRawTextureData());
+
+        CreatePage();
     }
 	
 	void Update ()
@@ -67,60 +77,25 @@ public class TextureWriter : MonoBehaviour
         }
     }
 
-    enum ColorType
-    {
-        Erazer = 0,
-        Red,
-        Green,
-        Blue,
-        White,
-        Gray
-    }
     public void ColorChange(int value)
     {
         brush.UpdateColor(value);
     }
 
+    public void CreatePage()
+    {
+        writePage = new Page();
+        writePage.SetCanvas(WriteRawImage);
+    }
 
-    // 描き込み(Textureに描き込むだけで、元になったpngファイルには反映されない)
     private void UpdatePixel(Vector2 position)
     {
-        var rx = position.x / Screen.width * Tex4Write.width;
-        var ry = position.y / Screen.height * Tex4Write.height;
-
-        if (rx < 0 || rx > Tex4Write.width || ry < 0 || ry > Tex4Write.height)
+        var rx = position.x / Screen.width * writePage.TexWidth;
+        var ry = position.y / Screen.height * writePage.TexHeight;
+        
+        if (rx < 0 || rx > writePage.TexWidth || ry < 0 || ry > writePage.TexHeight)
             return;
 
-        var col = copiedTex.GetPixel((int)rx, (int)ry);
-
-        //SetPixelsSquare(copiedTex, (int)rx, (int)ry);
-        SetPixelsCircle(copiedTex, (int)rx, (int)ry);
-
-        WriteRawImage.texture = copiedTex;
-        //Tex4Write = copiedTex;
-        Mat.mainTexture = copiedTex;
-    }
-
-    private void SetPixelsSquare(Texture2D tex, int x, int y)
-    {
-        // Textureにピクセルカラーを設定する
-        tex.SetPixels(x, y, brush.Width, brush.Height, brush.Colors);
-        // 反映
-        copiedTex.Apply();
-    }
-
-    private void SetPixelsCircle(Texture2D tex, int x, int y)
-    {
-        var center = new Vector2(x, y);
-        int r = brush.Width;
-        for (int iy = -r; iy < r; iy++)
-        {
-            for (int ix = -r; ix < r; ix++)
-            {
-                if (ix * ix + iy * iy < r * r)
-                    tex.SetPixel(x + ix, y + iy, brush.Color);
-            }
-        }
-        copiedTex.Apply();
+        writePage.WriteCircle((int)rx, (int)ry, brush.Color, brush.Width);
     }
 }

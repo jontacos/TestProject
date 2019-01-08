@@ -31,6 +31,8 @@ public class AndroidPluginReciever : MonoBehaviour
             var height = Screen.height;
             var tex = new Texture2D(width, height);
             tex.LoadImage(bytReadBinary);
+            tex.filterMode = FilterMode.Trilinear;
+            tex.Apply();
             texObj.texture = tex;
         }
         else
