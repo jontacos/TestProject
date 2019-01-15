@@ -36,32 +36,32 @@ public static class UtilExtendMethods
 
     public static Transform SetLocalPositionX(this Transform t, float x)
     {
-        t.localPosition = new Vector3(x, t.position.y, t.position.z);
+        t.localPosition = new Vector3(x, t.localPosition.y, t.localPosition.z);
         return t;
     }
     public static Transform SetLocalPositionY(this Transform t, float y)
     {
-        t.localPosition = new Vector3(t.position.x, y, t.position.z);
+        t.localPosition = new Vector3(t.localPosition.x, y, t.localPosition.z);
         return t;
     }
     public static Transform SetLocalPositionZ(this Transform t, float z)
     {
-        t.localPosition = new Vector3(t.position.x, t.position.y, z);
+        t.localPosition = new Vector3(t.localPosition.x, t.localPosition.y, z);
         return t;
     }
     public static Transform AddLocalPositionX(this Transform t, float x)
     {
-        t.localPosition = new Vector3(t.position.x + x, t.position.y, t.position.z);
+        t.localPosition = new Vector3(t.localPosition.x + x, t.localPosition.y, t.localPosition.z);
         return t;
     }
     public static Transform AddLocalPositionY(this Transform t, float y)
     {
-        t.localPosition = new Vector3(t.position.x, t.position.y + y, t.position.z);
+        t.localPosition = new Vector3(t.localPosition.x, t.localPosition.y + y, t.localPosition.z);
         return t;
     }
     public static Transform AddLocalPositionZ(this Transform t, float z)
     {
-        t.localPosition = new Vector3(t.position.x, t.position.y, t.position.z + z);
+        t.localPosition = new Vector3(t.localPosition.x, t.localPosition.y, t.localPosition.z + z);
         return t;
     }
 
@@ -93,22 +93,22 @@ public static class UtilExtendMethods
     }
     public static Transform SetLocalPositionXY(this Transform t, float x, float y)
     {
-        t.localPosition = new Vector3(x, y, t.position.z);
+        t.localPosition = new Vector3(x, y, t.localPosition.z);
         return t;
     }
     public static Transform SetLocalPositionXY(this Transform t, Vector2 xy)
     {
-        t.localPosition = new Vector3(xy.x, xy.y, t.position.z);
+        t.localPosition = new Vector3(xy.x, xy.y, t.localPosition.z);
         return t;
     }
     public static Transform SetLocalPositionYZ(this Transform t, float y, float z)
     {
-        t.localPosition = new Vector3(t.position.x, y, z);
+        t.localPosition = new Vector3(t.localPosition.x, y, z);
         return t;
     }
     public static Transform SetLocalPositionXZ(this Transform t, float x, float z)
     {
-        t.localPosition = new Vector3(x, t.position.y, z);
+        t.localPosition = new Vector3(x, t.localPosition.y, z);
         return t;
     }
 
