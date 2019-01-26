@@ -6,7 +6,7 @@ public class AndroidPluginReciever : MonoBehaviour
 {
     private static readonly string PACKAGE_NAME_NATIVE_PLUGIN = "androidcam.jontacos.unity.mylibrary.CameraRoll";
 
-    protected void Start()
+    protected virtual void Start()
     {
     }
     public virtual void OnCallBack(string dataPath)

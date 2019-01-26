@@ -34,10 +34,29 @@ public class Page
             for (int ix = -r; ix < r; ix++)
             {
                 if (ix * ix + iy * iy < r * r)
-                    whiteCanvas.SetPixel(x + ix, y + iy, color);
+                {
+                    if(x + ix >= 0 && y + iy >= 0)
+                        whiteCanvas.SetPixel(x + ix, y + iy, color);
+                }
             }
         }
         whiteCanvas.Apply();
+    }
+    public void WriteCircleNotApply(int x, int y, Color color, int radius)
+    {
+        var center = new Vector2(x, y);
+        int r = radius;
+        for (int iy = -r; iy < r; iy++)
+        {
+            for (int ix = -r; ix < r; ix++)
+            {
+                if (ix * ix + iy * iy < r * r)
+                {
+                    if (x + ix >= 0 && y + iy >= 0)
+                        whiteCanvas.SetPixel(x + ix, y + iy, color);
+                }
+            }
+        }
     }
     public void Clear()
     {
