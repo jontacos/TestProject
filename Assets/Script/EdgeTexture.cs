@@ -40,10 +40,6 @@ public class EdgeTexture : MonoBehaviour
         //var tex = Jontacos.BitmapLoader.Load("E:/Program/TestProject/Assets/Resources/Textures/c0kqmtaw.bmp");
         var tex = Resources.Load<Texture2D>("Textures/in05");
 
-        var filePath = Application.streamingAssetsPath + "/" + "SavedScreen.png";
-        byte[] b = File.ReadAllBytes(filePath);
-        tex.LoadImage(b, false);
-
         SetTextureSizeByAspect(tex);
 #endif
     }
