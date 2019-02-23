@@ -13,7 +13,7 @@ public class EdgeTexture : MonoBehaviour
     public Texture Texture { get { return edgeTex.texture; } set { edgeTex.texture = value; } }
     public RectTransform RectTransform { get { return edgeTex.rectTransform; } }
 
-    void Start ()
+    void Awake ()
     {
         edgeTex = GetComponent<RawImage>();
     }
@@ -39,7 +39,6 @@ public class EdgeTexture : MonoBehaviour
 
         //var tex = Jontacos.BitmapLoader.Load("E:/Program/TestProject/Assets/Resources/Textures/c0kqmtaw.bmp");
         var tex = Resources.Load<Texture2D>("Textures/in05");
-
         SetTextureSizeByAspect(tex);
 #endif
     }
