@@ -4,14 +4,13 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Experimental.U2D.IK;
 
-public class BoneController : MonoBehaviour {
-
+public class BoneController : MonoBehaviour
+{
     public IKManager2D IKManager;
     public SpriteRenderer SPRenderer;
 
 	void Start ()
     {
-
         TextureLoad();
     }
 

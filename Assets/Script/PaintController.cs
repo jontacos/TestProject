@@ -8,8 +8,7 @@ using UnityEngine.UI;
 public class PaintController : MonoBehaviour
 {
     private static readonly float PULLET_DOWN_Y = -130;
-    private static readonly float MAX_EDGE_TEX_X = 1820;
-    private static readonly float MAX_EDGE_TEX_Y = 1080;
+    private static readonly float CANVAS_TEX_X = 1820;
 
     enum ColorType
     {
@@ -49,9 +48,9 @@ public class PaintController : MonoBehaviour
     public EdgeTexture EdgeTex;
 
     public RawImage WriteRawImage;
-    //public RawImage EdgeTex;
     public RawImage ScreenShot;
 
+    public GameObject Menus;
     public GameObject ColorPullet;
 
     private Page writePage;
@@ -78,9 +77,7 @@ public class PaintController : MonoBehaviour
         var mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // マウスクリック
         if (Jontacos.UtilTouch.GetTouch() != Jontacos.TouchInfo.None)
-        {
             UpdatePixel(Jontacos.UtilTouch.GetTouchPosition());
-        }
         else
             prePos = Vector2.zero;
     }
@@ -98,7 +95,7 @@ public class PaintController : MonoBehaviour
 
     private void UpdatePixel(Vector2 position)
     {
-        var rx = position.x / (Screen.width * MAX_EDGE_TEX_X / 1920) * writePage.TexWidth;
+        var rx = position.x / (Screen.width * CANVAS_TEX_X / 1920) * writePage.TexWidth;
         var ry = position.y / Screen.height * writePage.TexHeight;
         
         if (rx < 0 || rx > writePage.TexWidth || ry < 0 || ry > writePage.TexHeight)
@@ -174,9 +171,15 @@ public class PaintController : MonoBehaviour
     {
         StartCoroutine(SaveScreenShot());
     }
+
+    public void ChangeActive()
+    {
+        gameObject.SetActive(!gameObject.activeSelf);
+    }
+
     private IEnumerator SaveScreenShot()
     {
-        ColorPullet.gameObject.SetActive(false);
+        Menus.gameObject.SetActive(false);
 
         yield return new WaitForEndOfFrame();
         Debug.Log(Screen.width);
@@ -184,7 +187,7 @@ public class PaintController : MonoBehaviour
         var rate = (float)EdgeTex.Texture.width / EdgeTex.Texture.height;
         var r = 1820f / 1920f;
         var height = Screen.height;
-        var width = Mathf.RoundToInt(Screen.height * rate); //(Screen.width - Screen.width * r);
+        var width = Mathf.RoundToInt(Screen.height * rate); 
         var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
         tex.ReadPixels(new Rect((Screen.width * r - width) / 2, 0, width, height), 0, 0);
         tex.Apply();
@@ -192,7 +195,7 @@ public class PaintController : MonoBehaviour
         StartCoroutine(WriteFile(tex));
         yield return null;
 
-        ColorPullet.gameObject.SetActive(true);
+        Menus.gameObject.SetActive(true);
     }
 
 
@@ -224,7 +227,7 @@ public class PaintController : MonoBehaviour
         ScreenShot.rectTransform.offsetMin = EdgeTex.RectTransform.offsetMin;
         ScreenShot.rectTransform.offsetMax = EdgeTex.RectTransform.offsetMax;
         ScreenShot.texture = tex; 
-        ScreenShot.gameObject.SetActive(true);
+        //ScreenShot.gameObject.SetActive(true);
 
         var path = Application.dataPath + "/StreamingAssets/";
         Debug.Log(path);

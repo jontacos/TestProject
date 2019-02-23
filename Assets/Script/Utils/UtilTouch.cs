@@ -14,7 +14,6 @@ namespace Jontacos
         Canceled,
     }
 
-
     public static class UtilTouch
     {
         private static Vector3 TouchPosition = Vector3.zero;

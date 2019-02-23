@@ -31,7 +31,6 @@ public class AndroidPluginTextureLoad : AndroidPluginReciever
             {
                 Debug.Log("-----BMPLoad-----");
                 tex = Jontacos.BitmapLoader.Load(ext);
-                //EdgeTex.Texture = tex;
             }
             else
             {
@@ -44,7 +43,6 @@ public class AndroidPluginTextureLoad : AndroidPluginReciever
                 tex.LoadImage(bytReadBinary);
                 tex.filterMode = FilterMode.Trilinear;
                 tex.Apply();
-                //EdgeTex.Texture = tex;
             }
             EdgeTex.SetTextureSizeByAspect(tex);
         }
