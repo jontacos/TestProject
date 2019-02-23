@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class AndroidPluginTextureLoad : AndroidPluginReciever
 {
-    public RawImage texObj;
+    public EdgeTexture EdgeTex;
 
     protected override void Start()
     {
@@ -26,11 +26,12 @@ public class AndroidPluginTextureLoad : AndroidPluginReciever
         {
             var ext = Path.GetExtension(path).ToLower();
             Debug.Log("------" + path + "," + ext + "------");
+            Texture2D tex;
             if(ext == ".bmp")
             {
                 Debug.Log("-----BMPLoad-----");
-                var tex = Jontacos.BitmapLoader.Load(ext);
-                texObj.texture = tex;
+                tex = Jontacos.BitmapLoader.Load(ext);
+                //EdgeTex.Texture = tex;
             }
             else
             {
@@ -39,12 +40,13 @@ public class AndroidPluginTextureLoad : AndroidPluginReciever
                 byte[] bytReadBinary = File.ReadAllBytes(path);
                 var width = Screen.width;
                 var height = Screen.height;
-                var tex = new Texture2D(width, height);
+                tex = new Texture2D(width, height);
                 tex.LoadImage(bytReadBinary);
                 tex.filterMode = FilterMode.Trilinear;
                 tex.Apply();
-                texObj.texture = tex;
+                //EdgeTex.Texture = tex;
             }
+            EdgeTex.SetTextureSizeByAspect(tex);
         }
         else
             Debug.LogError("-----File Dont Exist-----");

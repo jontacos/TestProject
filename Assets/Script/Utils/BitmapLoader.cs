@@ -123,6 +123,15 @@ namespace Jontacos
                 fs.Read(bitData, i * stride, stride);
             }
 
+            // rgbの順がbgrなので入れ替え
+            for (int i = 0; i < stride * bih.biHeight / 4; ++i)
+            {
+                var idx = i * 4;
+                var t = bitData[idx];
+                bitData[idx] = bitData[idx+2];
+                bitData[idx+2] = t;
+            }
+
             fs.Close();
             fs.Dispose();
 

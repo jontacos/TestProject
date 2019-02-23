@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class PaintController : MonoBehaviour
 {
     private static readonly float PULLET_DOWN_Y = -130;
+    private static readonly float MAX_EDGE_TEX_X = 1820;
+    private static readonly float MAX_EDGE_TEX_Y = 1080;
 
     enum ColorType
     {
@@ -44,13 +46,12 @@ public class PaintController : MonoBehaviour
     }
     private Brush brush;
 
-    public Material Mat;
+    public EdgeTexture EdgeTex;
+
     public RawImage WriteRawImage;
-    public RawImage EdgeTex;
+    //public RawImage EdgeTex;
     public RawImage ScreenShot;
 
-    public GameObject Pointer;
-    public GameObject View;
     public GameObject ColorPullet;
 
     private Page writePage;
@@ -63,11 +64,10 @@ public class PaintController : MonoBehaviour
     void Start ()
     {
         brush = new Brush();
-        Mat = View.GetComponent<MeshRenderer>().material;
         prePos = Vector2.zero;
 
         CreatePage();
-        LoadTexture();
+        EdgeTex.LoadTexture();
     }
 	
 	void Update ()
@@ -76,13 +76,6 @@ public class PaintController : MonoBehaviour
         //    return;
         // マウス座標をワールド座標からスクリーン座標に変換する
         var mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //Debug.Log(Input.mousePosition);
-        Pointer.transform.position = new Vector3(
-            mouse.x,
-            mouse.y,
-            transform.position.z /* マウスのz座標は-10となってしまうため、
-            スクリプトがアタッチされているオブジェクトのz座標で補正する */
-        );
         // マウスクリック
         if (Jontacos.UtilTouch.GetTouch() != Jontacos.TouchInfo.None)
         {
@@ -103,37 +96,13 @@ public class PaintController : MonoBehaviour
         writePage.SetCanvas(WriteRawImage);
     }
 
-    public void LoadTexture()
-    {
-#if !UNITY_EDITOR
-        var accessor = new AndroidPluginAccessor();
-        accessor.CallStatic(AndroidPluginAccessor.OPEN_CAM_ROLL);
-#else
-        var t = Resources.Load<Texture2D>("Textures/1yamv0g1");
-        //// XYでテクスチャの端点を決められ、WHでテクスチャサイズを変更できる
-        ////EdgeTex.uvRect = new Rect(EdgeTex.uvRect.x, EdgeTex.uvRect.y, EdgeTex.texture.width, EdgeTex.texture.height);
-        ////EdgeTex.SetNativeSize();
-        //byte[] bytReadBinary = File.ReadAllBytes("E:/Program/TestProject/Assets/Resources/Textures/1yamv0g1");
-        //var width = Screen.width;
-        //var height = Screen.height;
-        //var tex = new Texture2D(width, height);
-        //tex.LoadImage(bytReadBinary);
-        //tex.filterMode = FilterMode.Trilinear;
-        //tex.Apply();
-
-        var tex = Jontacos.BitmapLoader.Load("E:/Program/TestProject/Assets/Resources/Textures/c0kqmtaw.bmp");
-        EdgeTex.texture = tex;
-#endif
-    }
-
     private void UpdatePixel(Vector2 position)
     {
-        var rx = position.x / (Screen.width * 1820 / 1920) * writePage.TexWidth;
+        var rx = position.x / (Screen.width * MAX_EDGE_TEX_X / 1920) * writePage.TexWidth;
         var ry = position.y / Screen.height * writePage.TexHeight;
         
         if (rx < 0 || rx > writePage.TexWidth || ry < 0 || ry > writePage.TexHeight)
             return;
-
 
         if (prePos.sqrMagnitude > 1)
         {
@@ -211,8 +180,13 @@ public class PaintController : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
         Debug.Log(Screen.width);
-        var tex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-        tex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+
+        var rate = (float)EdgeTex.Texture.width / EdgeTex.Texture.height;
+        var r = 1820f / 1920f;
+        var height = Screen.height;
+        var width = Mathf.RoundToInt(Screen.height * rate); //(Screen.width - Screen.width * r);
+        var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+        tex.ReadPixels(new Rect((Screen.width * r - width) / 2, 0, width, height), 0, 0);
         tex.Apply();
 
         StartCoroutine(WriteFile(tex));
@@ -226,7 +200,8 @@ public class PaintController : MonoBehaviour
     {
         Debug.Log("WriteFile");
         var fileName = "Screenshot" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-
+        
+        var bytes = tex.EncodeToPNG();
 #if !UNITY_EDITOR
         //保存パス取得
         using (AndroidJavaClass jcEnv = new AndroidJavaClass("android.os.Environment"))
@@ -235,7 +210,6 @@ public class PaintController : MonoBehaviour
             var output = obj.Call<string>("toString");
             output += "/ScreenShots/" + fileName;
             //var bytes = tex.GetRawTextureData();
-            var bytes = tex.EncodeToPNG();
             File.WriteAllBytes(output, bytes);
             yield return new WaitForEndOfFrame();
 
@@ -247,8 +221,15 @@ public class PaintController : MonoBehaviour
             ScanFile(output, null);
         }
 #else
-        ScreenShot.texture = tex;
+        ScreenShot.rectTransform.offsetMin = EdgeTex.RectTransform.offsetMin;
+        ScreenShot.rectTransform.offsetMax = EdgeTex.RectTransform.offsetMax;
+        ScreenShot.texture = tex; 
         ScreenShot.gameObject.SetActive(true);
+
+        var path = Application.dataPath + "/StreamingAssets/";
+        Debug.Log(path);
+        File.WriteAllBytes(path + "SavedScreen.png", bytes);
+
         yield return null;
 #endif
     }
