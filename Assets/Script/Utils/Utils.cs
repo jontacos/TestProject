@@ -1,19 +1,51 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Jontacos
 {
     public static class Utils
     {
+        /// <summary>
+        /// IOを利用した直接的なファイルロード(Androidでは不可)
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public static Texture2D LoadTextureByFileIO(string path, int width, int height)
         {
             var tex = new Texture2D(width, height);
-            //var filePath = Application.streamingAssetsPath + "/" + fileName;
             byte[] b = File.ReadAllBytes(path);
             tex.LoadImage(b, false);
             return tex;
         }
+        /// <summary>
+        /// UnityWebRequestを利用したファイルロード
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Texture2D LoadTextureByWebRequest(string path, int width, int height)
+        {
+            var tex = new Texture2D(width, height);
+            var enumerator = LoadTextureByWebRequest(path, 100, 100, tex);
+            while (enumerator.MoveNext()) { Debug.Log(Time.realtimeSinceStartup); }
+            return tex;
+        }
+        private static IEnumerator LoadTextureByWebRequest(string path, int width, int height, Texture2D texture)
+        {
+            var request = UnityWebRequest.Get(path);
+            yield return request.SendWebRequest();
 
+            while(!request.isDone)
+                yield return null;
+
+            byte[] b = request.downloadHandler.data;
+            texture.LoadImage(b, false);
+        }
 
         /// <summary>
         /// Ease-In。最初ゆっくり、後半速い。

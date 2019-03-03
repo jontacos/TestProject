@@ -11,7 +11,7 @@ public class SavedImagePresenter : MonoBehaviour
     private static readonly int MAX_VIEW_ITEMS = 12;
 
     [SerializeField]
-    private ImageScrollViewer viewer;
+    private ScrollViewer viewer;
 
     private ImageScrollModel imagesModel;
 
@@ -20,19 +20,21 @@ public class SavedImagePresenter : MonoBehaviour
         var items = viewer.ViewContent.GetComponentsInChildren<CanvasRenderer>().Select(i => i.GetComponent<RectTransform>()).ToArray();
         imagesModel = new ImageScrollModel(items, MAX_VIEW_ITEMS);
 
-        viewer.Initialize(MAX_VIEW_ITEMS, imagesModel.ItemsCount, imagesModel.FirstItem.anchoredPosition.y);
+        viewer.Initialize(MAX_VIEW_ITEMS, imagesModel.ItemsCount, imagesModel.SpriteList);//, imagesModel.FirstItem.anchoredPosition.y);
         viewer.OnUpdateItemsByScrollDown = OnScrollDown;
         viewer.OnUpdateItemsByScrollUp = OnScrollUp;
+
+        imagesModel.OnUpdateImage = viewer.OnUpdateImage;
     }
 	
-    private void OnScrollDown(int columnCnt, int currentRow, float anchoredY)
+    private void OnScrollDown(int columnCnt, int currentRow, LinkedList<RectTransform> list)// float anchoredY)
     {
-        imagesModel.OnChangeDrawByScrollDown(columnCnt, currentRow, anchoredY);
+        imagesModel.OnChangeDrawByScrollDown(columnCnt, currentRow, list);// anchoredY);
         Resources.UnloadUnusedAssets();
     }
-    private void OnScrollUp(int columnCnt, int currentRow, float anchoredY)
+    private void OnScrollUp(int columnCnt, int currentRow, LinkedList<RectTransform> list)// float anchoredY)
     {
-        imagesModel.OnChangeDrawScrollUp(columnCnt, currentRow, anchoredY);
+        imagesModel.OnChangeDrawByScrollUp(columnCnt, currentRow, list);// anchoredY);
         Resources.UnloadUnusedAssets();
     }
 }

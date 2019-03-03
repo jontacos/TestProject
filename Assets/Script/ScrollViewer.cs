@@ -22,6 +22,11 @@ public class ScrollViewer : MonoBehaviour
     private int maxViewObjectCount;
 
     /// <summary>
+    /// 現在画面上で一番上に表示させている列番号
+    /// </summary>
+    private int currentItemRowNo = 0;
+
+    /// <summary>
     /// スクロール補正用
     /// </summary>
     private float scrollDiff = 0f;
@@ -36,40 +41,16 @@ public class ScrollViewer : MonoBehaviour
     /// </summary>
     private float startedTopItemAnchoredY = 0;
 
-    ///// <summary>
-    ///// 表示アイテム用リスト
-    ///// </summary>
-    //protected LinkedList<RectTransform> itemList = new LinkedList<RectTransform>();
-
-    ///// <summary>
-    ///// 表示アイテム数
-    ///// </summary>
-    //protected int itemsCount = 0;
-
     /// <summary>
-    /// 下スクロールによって画像更新が行われる際のコールバック
+    /// 表示アイテム用リスト
     /// </summary>
-    public Action<int, int, float> OnUpdateItemsByScrollDown;
-    /// <summary>
-    /// 上スクロールによって画像更新が行われる際のコールバック
-    /// </summary>
-    public Action<int, int, float> OnUpdateItemsByScrollUp;
-
-    /// <summary>
-    /// アイテム列が上下に移動した際に更新させる処理
-    /// arg1:画面表示上の最上段列番号, arg2:下スクロールならtrue
-    /// </summary>
-    protected Action<int, bool> OnUpdateViewItems;
-
-    /// <summary>
-    /// 現在画面上で一番上に表示させている列番号
-    /// </summary>
-    private int currentItemRowNo = 0;
+    public LinkedList<RectTransform> ItemList { get; private set; }
+    //private LinkedList<RectTransform> itemList = new LinkedList<RectTransform>();
 
     /// <summary>
     /// アイテム表示列数
     /// </summary>
-    [Range(1,100)]
+    [Range(1, 100)]
     public int ColumnCount = 3;
 
     /// <summary>
@@ -77,25 +58,38 @@ public class ScrollViewer : MonoBehaviour
     /// </summary>
     public int ItemsHeight = 110;
 
+    ///// <summary>
+    ///// スクロールによるアンカー位置の調整用
+    ///// </summary>
+    //public float ChangedAnchoredY { get; private set; }
+
+    /// <summary>
+    /// 下スクロールによって画像更新が行われる際のコールバック
+    /// </summary>
+    public Action<int, int, LinkedList<RectTransform>/*float*/> OnUpdateItemsByScrollDown;
+    /// <summary>
+    /// 上スクロールによって画像更新が行われる際のコールバック
+    /// </summary>
+    public Action<int, int, LinkedList<RectTransform>/*float*/> OnUpdateItemsByScrollUp;
+
     protected virtual void Awake()
     {
         scroll = GetComponent<ScrollRect>();
+        ItemList = new LinkedList<RectTransform>();
         var items = viewContent.GetComponentsInChildren<CanvasRenderer>().Select(i => i.GetComponent<RectTransform>()).ToArray();
-        //foreach(var item in items)
-        //    itemList.AddLast(item);
+        foreach (var item in items)
+            ItemList.AddLast(item);
     }
 
     protected virtual void Start()
     {
-        //SetScrollerHeight();
-        //for (int i = 0; i < itemList.Count; ++i)
-        //{
-        //    var item = itemList.ElementAt(i);
-        //    item.GetComponent<Image>().color = Color.white;
-        //    if (i > itemsCount - 1)
-        //        item.gameObject.SetActive(false);
-        //}
-        //startedTopItemAnchoredY = itemList.First.Value.anchoredPosition.y;
+        for (int i = 0; i < ItemList.Count; ++i)
+        {
+            var item = ItemList.ElementAt(i);
+            item.GetComponent<Image>().color = Color.white;
+            //if (i > ItemsCount - 1)
+            item.gameObject.SetActive(false);
+        }
     }
 
     protected void Update()
@@ -103,25 +97,22 @@ public class ScrollViewer : MonoBehaviour
         LoopItemsOnUndraw();
     }
 
-    public void Initialize(int viewObjCnt, int itemsCount, float y)
+    public void Initialize(int viewObjCnt, int itemsCount, List<Sprite> list)//, float y)
     {
         maxViewObjectCount = viewObjCnt;
-        startedTopItemAnchoredY = y;
+        startedTopItemAnchoredY = ItemList.First.Value.anchoredPosition.y;//y;
 
         scrollHeight = Mathf.Max(1, itemsCount / ColumnCount) * ItemsHeight;
         viewContent.offsetMin = new Vector2(0, -scrollHeight);
+
+        for (int i = 0; i < list.Count; ++i)
+        {
+            var image = ItemList.ElementAt(i).GetComponent<Image>();
+            image.sprite = list[i];
+            image.gameObject.SetActive(true);
+        }
     }
 
-    ///// <summary>
-    ///// ScrollViewのスクロール幅の指定
-    ///// </summary>
-    //public void SetScrollerHeight(int itemsCount)
-    //{
-    //    scrollHeight = Mathf.Max(1, itemsCount / ColumnCount) * ItemsHeight;
-    //    viewContent.offsetMin = new Vector2(0, -scrollHeight);
-    //}
-
-    public float ChangedAnchoredY { get; private set; }
     /// <summary>
     /// アイテムの描画が見えなくなったものからループさせる
     /// </summary>
@@ -134,22 +125,19 @@ public class ScrollViewer : MonoBehaviour
         {
             scrollDiff += ItemsHeight;
             ++currentItemRowNo;
+            for (int i = 0; i < ColumnCount; ++i)
+            {
+                var topItem = ItemList.First.Value;
+                topItem.gameObject.SetActive(false);
+                ItemList.RemoveFirst();
+                ItemList.AddLast(topItem);
+                topItem.anchoredPosition = new Vector2(topItem.anchoredPosition.x, //anchoredY);
+                    startedTopItemAnchoredY - scrollDiff - ItemsHeight * (maxViewObjectCount / ColumnCount - 1));
+            }
 
-            //for (int i = 0; i < ColumnCount; ++i)
-            //{
-            //    var topItem = itemList.First.Value;
-            //    itemList.RemoveFirst();
-            //    itemList.AddLast(topItem);
-            //    topItem.anchoredPosition = new Vector2(topItem.anchoredPosition.x,
-            //        startedTopItemAnchoredY - scrollDiff - ItemsHeight * (MAX_VIEW_ITEMS / ColumnCount - 1));
-            //}
-
-            ChangedAnchoredY = startedTopItemAnchoredY - scrollDiff - ItemsHeight * (maxViewObjectCount / ColumnCount - 1);
+            //ChangedAnchoredY = startedTopItemAnchoredY - scrollDiff - ItemsHeight * (maxViewObjectCount / ColumnCount - 1);
             if (OnUpdateItemsByScrollDown != null)
-                OnUpdateItemsByScrollDown(ColumnCount, currentItemRowNo, ChangedAnchoredY);
-
-            //if (OnUpdateViewItems != null)
-            //    OnUpdateViewItems(currentItemRowNo, true);
+                OnUpdateItemsByScrollDown(ColumnCount, currentItemRowNo, ItemList/*ChangedAnchoredY*/);
         }
         // 上スクロール時
         else if(anchoredPosY - scrollDiff < 0 && scrollDiff > 1)
@@ -157,22 +145,26 @@ public class ScrollViewer : MonoBehaviour
             scrollDiff -= ItemsHeight;
             --currentItemRowNo;
 
-            //for (int i = 0; i < ColumnCount; ++i)
-            //{
-            //    var bottomItem = itemList.Last.Value;
-            //    itemList.RemoveLast();
-            //    itemList.AddFirst(bottomItem);
-            //    bottomItem.anchoredPosition = new Vector2(bottomItem.anchoredPosition.x,
-            //        startedTopItemAnchoredY - scrollDiff);
-            //}
-
-            ChangedAnchoredY = startedTopItemAnchoredY - scrollDiff;
+            for (int i = 0; i < ColumnCount; ++i)
+            {
+                var bottomItem = ItemList.Last.Value;
+                bottomItem.gameObject.SetActive(false);
+                ItemList.RemoveLast();
+                ItemList.AddFirst(bottomItem);
+                bottomItem.anchoredPosition = new Vector2(bottomItem.anchoredPosition.x, //anchoredY);
+                    startedTopItemAnchoredY - scrollDiff);
+            }
+            //ChangedAnchoredY = startedTopItemAnchoredY - scrollDiff;
             if(OnUpdateItemsByScrollUp != null)
-                OnUpdateItemsByScrollUp(ColumnCount, currentItemRowNo, ChangedAnchoredY);
-
-            //if (OnUpdateViewItems != null)
-            //    OnUpdateViewItems(currentItemRowNo, false);
+                OnUpdateItemsByScrollUp(ColumnCount, currentItemRowNo, ItemList/*ChangedAnchoredY*/);
         }
+    }
+
+    public void OnUpdateImage(int idx, Sprite sprite)
+    {
+        var item = ItemList.ElementAt(idx).GetComponent<Image>();
+        item.sprite = sprite;
+        item.gameObject.SetActive(true);
     }
 }
 

@@ -5017,7 +5017,7 @@ GameObject:
   - component: {fileID: 1533412538}
   - component: {fileID: 1533412539}
   m_Layer: 0
-  m_Name: SavedImageViewer
+  m_Name: SavedImagePresenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5048,6 +5048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2eff8dcc32c5447aee2a911a96b384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewer: {fileID: 1091074468}
 --- !u!1 &1544629795
 GameObject:
   m_ObjectHideFlags: 0
@@ -5317,7 +5318,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1574297509}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
