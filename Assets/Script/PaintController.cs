@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Jontacos;
 
 public class PaintController : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class PaintController : MonoBehaviour
 
     private class Brush
     {
-        private static Color[] ColorTypes = new Color[] { Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.gray };
+        private static readonly Color[] ColorTypes = new Color[] { Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.gray };
 
         public int Width = 8;
         public int Height = 8;
@@ -76,8 +77,8 @@ public class PaintController : MonoBehaviour
         // マウス座標をワールド座標からスクリーン座標に変換する
         var mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // マウスクリック
-        if (Jontacos.UtilTouch.GetTouch() != Jontacos.TouchInfo.None)
-            UpdatePixel(Jontacos.UtilTouch.GetTouchPosition());
+        if (UtilTouch.GetTouch() != TouchInfo.None)
+            UpdatePixel(UtilTouch.GetTouchPosition());
         else
             prePos = Vector2.zero;
     }
@@ -97,15 +98,18 @@ public class PaintController : MonoBehaviour
     {
         var rx = position.x / (Screen.width * CANVAS_TEX_X / 1920) * writePage.TexWidth;
         var ry = position.y / Screen.height * writePage.TexHeight;
-        
-        if (rx < 0 || rx > writePage.TexWidth || ry < 0 || ry > writePage.TexHeight)
-            return;
 
-        if (prePos.sqrMagnitude > 1)
+        if (rx < 0 || rx > writePage.TexWidth || ry < 0 || ry > writePage.TexHeight)
+        {
+            prePos = Vector2.zero;
+            return;
+        }
+
+        if (prePos.sqrMagnitude > 0.5f)
         {
             var pos = new Vector2(rx, ry);
             var nor = (pos - prePos).normalized;
-            var len = Mathf.Abs((int)Vector2.Distance(pos, prePos));
+            int len = (int)Mathf.Abs(Vector2.Distance(pos, prePos));
             var dis = Vector2.zero;
             for (int i = 0; i < len; ++i)
             {
@@ -143,7 +147,7 @@ public class PaintController : MonoBehaviour
         var t = 0f;
         while(t < time)
         {
-            var y = Jontacos.Utils.EaseOut(PULLET_DOWN_Y, 0, t,time);
+            var y = Utils.EaseOut(PULLET_DOWN_Y, 0, t,time);
             ColorPullet.transform.SetLocalPositionY(y);
             t += Time.deltaTime;
             yield return null;
@@ -157,7 +161,7 @@ public class PaintController : MonoBehaviour
         var t = 0f;
         while (t < time)
         {
-            var y = Jontacos.Utils.EaseOut(0, PULLET_DOWN_Y, t, time);
+            var y = Utils.EaseOut(0, PULLET_DOWN_Y, t, time);
             ColorPullet.transform.SetLocalPositionY(y);
             t += Time.deltaTime;
             yield return null;
@@ -203,7 +207,9 @@ public class PaintController : MonoBehaviour
     {
         Debug.Log("WriteFile");
         var fileName = "Screenshot" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-        
+
+        var path = Application.streamingAssetsPath + "/";
+
         var bytes = tex.EncodeToPNG();
 #if !UNITY_EDITOR
         //保存パス取得
@@ -213,7 +219,8 @@ public class PaintController : MonoBehaviour
             var output = obj.Call<string>("toString");
             output += "/ScreenShots/" + fileName;
             //var bytes = tex.GetRawTextureData();
-            File.WriteAllBytes(output, bytes);
+            path += "SavedScreen.png";
+            File.WriteAllBytes(path/*output*/, bytes);
             yield return new WaitForEndOfFrame();
 
             while (!File.Exists(output))
@@ -229,7 +236,6 @@ public class PaintController : MonoBehaviour
         ScreenShot.texture = tex; 
         //ScreenShot.gameObject.SetActive(true);
 
-        var path = Application.dataPath + "/StreamingAssets/";
         Debug.Log(path);
         File.WriteAllBytes(path + "SavedScreen.png", bytes);
 

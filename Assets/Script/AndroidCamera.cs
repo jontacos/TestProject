@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Jontacos;
 
 public class AndroidCamera : MonoBehaviour
 {
@@ -114,9 +115,9 @@ public class AndroidCamera : MonoBehaviour
         // 端末の回転に合わせて表示テクスチャも回転させる
         displayUI.transform.rotation = baseRotation * Quaternion.AngleAxis(webCamTex.videoRotationAngle, Vector3.forward);
 #endif
-        if (Jontacos.UtilTouch.GetTouch() == Jontacos.TouchInfo.Began || Jontacos.UtilTouch.GetTouch() == Jontacos.TouchInfo.Moved)
+        if (UtilTouch.GetTouch() == TouchInfo.Began || UtilTouch.GetTouch() == TouchInfo.Moved)
         {
-            var pos = Jontacos.UtilTouch.GetTouchPosition();
+            var pos = UtilTouch.GetTouchPosition();
             BlackAndWhite.SetFloat("_PosX", pos.x / width);
             BlackAndWhite.SetFloat("_PosY", pos.y / height);
         }
@@ -187,8 +188,8 @@ public class AndroidCamera : MonoBehaviour
         var pos = Vector2.zero;
         while (t < time)
         {
-            size = Jontacos.Utils.EaseOut(1f, 0.25f, t, time);
-            pos = Jontacos.Utils.EaseOut(Vector2.zero, new Vector2(-width * 0.5f + width * 0.25f * 0.5f, -height * 0.5f + height * 0.25f * 0.5f), t, time);
+            size = Utils.EaseOut(1f, 0.25f, t, time);
+            pos = Utils.EaseOut(Vector2.zero, new Vector2(-width * 0.5f + width * 0.25f * 0.5f, -height * 0.5f + height * 0.25f * 0.5f), t, time);
             //pos = RectTransformUtility.WorldToScreenPoint(cam, pos/*new Vector2(-Screen.width,-Screen.height)*/);
             captureIamge.rectTransform.SetScaleXY(size, size);
             captureIamge.rectTransform.SetLocalPositionXY(pos);

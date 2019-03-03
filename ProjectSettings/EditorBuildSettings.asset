@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/Texture2DUpdate.unity
+    path: Assets/Scenes/ColoringPages.unity
     guid: e1dd1f19954044a48bcc0360cd78ec47
+  - enabled: 0
+    path: Assets/Scenes/New Scene.unity
+    guid: 839efe8053fb02742aeddeb8464a4f31
   m_configObjects: {}

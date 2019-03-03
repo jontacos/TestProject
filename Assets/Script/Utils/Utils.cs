@@ -1,9 +1,20 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 namespace Jontacos
 {
     public static class Utils
     {
+        public static Texture2D LoadTextureByFileIO(string path, int width, int height)
+        {
+            var tex = new Texture2D(width, height);
+            //var filePath = Application.streamingAssetsPath + "/" + fileName;
+            byte[] b = File.ReadAllBytes(path);
+            tex.LoadImage(b, false);
+            return tex;
+        }
+
+
         /// <summary>
         /// Ease-In。最初ゆっくり、後半速い。
         /// </summary>

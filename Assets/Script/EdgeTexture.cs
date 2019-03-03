@@ -20,7 +20,6 @@ public class EdgeTexture : MonoBehaviour
 	
     public void LoadTexture()
     {
-
 #if !UNITY_EDITOR
         var accessor = new AndroidPluginAccessor();
         accessor.CallStatic(AndroidPluginAccessor.OPEN_CAM_ROLL);
@@ -37,8 +36,8 @@ public class EdgeTexture : MonoBehaviour
         //tex.filterMode = FilterMode.Trilinear;
         //tex.Apply();
 
-        var tex = Jontacos.BitmapLoader.Load("E:/Program/TestProject/Assets/Resources/Textures/c0kqmtaw.bmp");
-        //var tex = Resources.Load<Texture2D>("Textures/in05");
+        //var tex = Jontacos.BitmapLoader.Load("E:/Program/TestProject/Assets/Resources/Textures/c0kqmtaw.bmp");
+        var tex = Resources.Load<Texture2D>("Textures/in05");
         SetTextureSizeByAspect(tex);
 #endif
     }
