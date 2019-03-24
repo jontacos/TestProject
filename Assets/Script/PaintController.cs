@@ -23,11 +23,11 @@ public class PaintController : MonoBehaviour
 
     private class Brush
     {
-        private static readonly Color[] ColorTypes = new Color[] { Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.gray };
-
         public int Width = 8;
         public int Height = 8;
+        /// <summary> 現在色保持用 </summary>
         public Color Color = Color.gray;
+        /// <summary> ブラシサイズ分の色配列 </summary>
         public Color[] Colors;
 
         public Brush()
@@ -37,9 +37,9 @@ public class PaintController : MonoBehaviour
                 Colors[i] = Color;
         }
 
-        public void UpdateColor(int val)
+        public void UpdateColor(Color col)
         {
-            Color = ColorTypes[val];
+            Color = col;
             for (int i = 0; i < Colors.Length; ++i)
                 Colors[i] = Color;
         }
@@ -83,17 +83,16 @@ public class PaintController : MonoBehaviour
             prePos = Vector2.zero;
     }
 
-    public void ColorChange(int value)
-    {
-        brush.UpdateColor(value);
-    }
-
     public void CreatePage()
     {
         writePage = new Page();
         writePage.SetCanvas(WriteRawImage);
     }
 
+    /// <summary>
+    /// テクスチャへの書き込み
+    /// </summary>
+    /// <param name="position"></param>
     private void UpdatePixel(Vector2 position)
     {
         var rx = position.x / (Screen.width * CANVAS_TEX_X / 1920) * writePage.TexWidth;
@@ -122,16 +121,32 @@ public class PaintController : MonoBehaviour
         prePos = new Vector2(rx, ry);
     }
 
-    public void ExpandBrush()
+    //private void ExpandBrush()
+    //{
+    //    brush.Width += 1;
+    //}
+    //private void ShrinkBrush()
+    //{
+    //    if(brush.Width > 0)
+    //        brush.Width -= 1;
+    //}
+    public void ChangeScale(int addScl)
     {
-        brush.Width += 1;
+        brush.Width = Mathf.Max(1, brush.Width + addScl);
+        //if (idx > 0)
+        //    ExpandBrush();
+        //else
+        //    ShrinkBrush();
     }
-    public void ShrinkBrush()
+    public void ColorChange(Color col)
     {
-        if(brush.Width > 0)
-            brush.Width -= 1;
+        brush.UpdateColor(col);
     }
-    public void SelectColorPullet()
+
+    /// <summary>
+    /// カラーパレットのON/OFF
+    /// </summary>
+    public void OpenOrCloseColorPullet()
     {
         if (isMovingPullet)
             return;
@@ -174,11 +189,6 @@ public class PaintController : MonoBehaviour
     public void OnSaveButton()
     {
         StartCoroutine(SaveScreenShot());
-    }
-
-    public void ChangeActive()
-    {
-        gameObject.SetActive(!gameObject.activeSelf);
     }
 
     private IEnumerator SaveScreenShot()
@@ -261,5 +271,11 @@ public class PaintController : MonoBehaviour
             jcMediaScannerConnection.CallStatic("scanFile", joContext, new string[] { path }, mimeTypes, null);
         }
         Handheld.StopActivityIndicator();
+    }
+
+
+    public void ChangeActive()
+    {
+        gameObject.SetActive(!gameObject.activeSelf);
     }
 }

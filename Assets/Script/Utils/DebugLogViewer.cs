@@ -16,7 +16,7 @@ public class DebugLogViewer : MonoBehaviour
 
     private void OnDestroy()
     {
-        Application.logMessageReceived += HandleLog;
+        Application.logMessageReceived -= HandleLog;
     }
 
     private void HandleLog(string logText, string stackTrace, LogType type)

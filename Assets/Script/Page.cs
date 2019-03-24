@@ -25,23 +25,6 @@ public class Page
         whiteCanvas.SetPixels(pixelX, pixelY, width, height, colors);
         whiteCanvas.Apply();
     }
-    public void WriteCircle(int x, int y, Color color, int radius)
-    {
-        var center = new Vector2(x, y);
-        int r = radius;
-        for (int iy = -r; iy < r; iy++)
-        {
-            for (int ix = -r; ix < r; ix++)
-            {
-                if (ix * ix + iy * iy < r * r)
-                {
-                    if(x + ix >= 0 && y + iy >= 0)
-                        whiteCanvas.SetPixel(x + ix, y + iy, color);
-                }
-            }
-        }
-        whiteCanvas.Apply();
-    }
     public void WriteCircleNotApply(int x, int y, Color color, int radius)
     {
         var center = new Vector2(x, y);
@@ -52,11 +35,18 @@ public class Page
             {
                 if (ix * ix + iy * iy < r * r)
                 {
-                    if (x + ix >= 0 && y + iy >= 0)
+                    var tx = x + ix;
+                    var ty = y + iy;
+                    if (tx >= 0 && ty >= 0 && tx < TexWidth && ty < TexHeight)
                         whiteCanvas.SetPixel(x + ix, y + iy, color);
                 }
             }
         }
+    }
+    public void WriteCircle(int x, int y, Color color, int radius)
+    {
+        WriteCircleNotApply(x, y, color, radius);
+        whiteCanvas.Apply();
     }
     public void Clear()
     {

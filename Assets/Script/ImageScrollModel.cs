@@ -32,16 +32,8 @@ public class ImageScrollModel
     /// </summary>
     public Action<int, Sprite> OnUpdateImage;
 
-    ///// <summary>
-    ///// 表示アイテム用リスト
-    ///// </summary>
-    //private LinkedList<RectTransform> itemList = new LinkedList<RectTransform>();
-    //public RectTransform FirstItem { get { return itemList.First.Value; } }
-
     public ImageScrollModel(RectTransform[] items, int viewObjCnt)
     {
-        //foreach (var item in items)
-        //    itemList.AddLast(item);
         maxViewObjectCount = viewObjCnt;
         Initialize();
     }
@@ -49,13 +41,6 @@ public class ImageScrollModel
     private void Initialize()
     {
         CheckSaveImageNums();
-        //for (int i = 0; i < itemList.Count; ++i)
-        //{
-        //    var item = itemList.ElementAt(i);
-        //    item.GetComponent<Image>().color = Color.white;
-        //    if (i > ItemsCount - 1)
-        //        item.gameObject.SetActive(false);
-        //}
         LoadImagesOnInit();
     }
 
@@ -77,15 +62,11 @@ public class ImageScrollModel
         for (int i = 0; i < cnt; ++i)
         {
             var path = filePaths[i];
+            //var tex = Utils.LoadTextureByFileIO(path, 100, 100);
             var tex = Utils.LoadTextureByWebRequest(path, 100, 100);
             var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
             sprite.name = Path.GetFileName(path);
             spriteList.Add(sprite);
-            //var item = itemList.ElementAt(i).GetComponent<Image>();
-            ////var tex = Utils.LoadTextureByFileIO(path, 100, 100);
-            //var tex = Utils.LoadTextureByWebRequest(path, 100,100);
-            //item.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
-            //item.sprite.name = Path.GetFileName(path);
         }
     }
     /// <summary>
@@ -93,13 +74,16 @@ public class ImageScrollModel
     /// </summary>
     private void LoadNextRowImages(int columnCnt,int currentRow, bool isScrollDown, LinkedList<RectTransform> list)
     {
-        var loadRow = currentRow + maxViewObjectCount / columnCnt;
-        var idx = (loadRow - 1) * columnCnt;
-        var diff = columnCnt;
-        if (!isScrollDown)
+        int idx = 0;
+        int diff = currentRow * columnCnt;
+        if (isScrollDown)
+        {
+            var loadRow = currentRow + maxViewObjectCount / columnCnt;
+            idx = (loadRow - 1) * columnCnt;
+        }
+        else
         {
             idx = currentRow * columnCnt;
-            diff = 0;
         }
 
         for (int i = idx; i < idx + columnCnt; ++i)
@@ -109,14 +93,10 @@ public class ImageScrollModel
             var path = filePaths[i];
             var name = Path.GetFileName(path);
             Sprite sprite = spriteList.FirstOrDefault(s => s.name == name);
-            if (sprite == null)//spriteList.Any(s => s.name == name))
+            if (sprite == null)
             {
                 //var tex = Utils.LoadTextureByFileIO(path, 100, 100);
                 var tex = Utils.LoadTextureByWebRequest(path, 100, 100);
-                //var item = itemList.ElementAt(i - diff).GetComponent<Image>();
-                //item.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
-                //item.sprite.name = name;
-
                 sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
                 sprite.name = name;
                 spriteList.Add(sprite);
@@ -124,36 +104,15 @@ public class ImageScrollModel
 
             if (OnUpdateImage != null)
                 OnUpdateImage(i - diff, sprite);
-            //var item = list.ElementAt(i - diff).GetComponent<Image>();
-            //item.sprite = sprite;
-            //item.sprite.name = name;
-            //item.gameObject.SetActive(true);
         }
     }
 
-    public void OnChangeDrawByScrollDown(int columnCnt, int currentRow, LinkedList<RectTransform> list)// float anchoredY)
+    public void OnChangeDrawByScrollDown(int columnCnt, int currentRow, LinkedList<RectTransform> list)
     {
-        //for (int i = 0; i < columnCnt; ++i)
-        //{
-        //    var topItem = itemList.First.Value;
-        //    itemList.RemoveFirst();
-        //    itemList.AddLast(topItem);
-        //    topItem.anchoredPosition = new Vector2(topItem.anchoredPosition.x, anchoredY);
-        //        //startedTopItemAnchoredY - scrollDiff - ItemsHeight * (MAX_VIEW_ITEMS / ColumnCount - 1));
-        //}
         LoadNextRowImages(columnCnt, currentRow, true, list);
     }
-    public void OnChangeDrawByScrollUp(int columnCnt, int currentRow, LinkedList<RectTransform> list)// float anchoredY)
+    public void OnChangeDrawByScrollUp(int columnCnt, int currentRow, LinkedList<RectTransform> list)
     {
-
-        //for (int i = 0; i < columnCnt; ++i)
-        //{
-        //    var bottomItem = itemList.Last.Value;
-        //    itemList.RemoveLast();
-        //    itemList.AddFirst(bottomItem);
-        //    bottomItem.anchoredPosition = new Vector2(bottomItem.anchoredPosition.x, anchoredY);
-        //        //startedTopItemAnchoredY - scrollDiff);
-        //}
         LoadNextRowImages(columnCnt, currentRow, false, list);
     }
 }

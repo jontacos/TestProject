@@ -32,7 +32,7 @@ namespace Jontacos
         {
             var tex = new Texture2D(width, height);
             var enumerator = LoadTextureByWebRequest(path, 100, 100, tex);
-            while (enumerator.MoveNext()) { Debug.Log(Time.realtimeSinceStartup); }
+            while (enumerator.MoveNext()) { /*Debug.Log(Time.realtimeSinceStartup);*/ }
             return tex;
         }
         private static IEnumerator LoadTextureByWebRequest(string path, int width, int height, Texture2D texture)

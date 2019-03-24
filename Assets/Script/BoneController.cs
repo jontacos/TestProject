@@ -29,7 +29,7 @@ public class BoneController : MonoBehaviour
 
     private void TextureLoad()
     {
-        var tmp = Resources.Load<Texture2D>("Textures/in05");
+        var tmp = Resources.Load<Texture2D>("Textures/ColoringPages/in05");
         //var tex = new Texture2D(tmp.width, tmp.height);
         //var filePath = Application.streamingAssetsPath + "/" + "SavedScreen.png";
         //byte[] b = File.ReadAllBytes(filePath);

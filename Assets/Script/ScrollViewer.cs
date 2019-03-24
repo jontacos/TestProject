@@ -8,11 +8,6 @@ using UnityEngine.UI;
 
 public class ScrollViewer : MonoBehaviour
 {
-    ///// <summary>
-    ///// 表示に利用するオブジェクト数
-    ///// </summary>
-    //protected static readonly int MAX_VIEW_ITEMS = 12;
-
     [SerializeField]
     private RectTransform viewContent;
     public RectTransform ViewContent { get { return viewContent; } }
@@ -45,7 +40,6 @@ public class ScrollViewer : MonoBehaviour
     /// 表示アイテム用リスト
     /// </summary>
     public LinkedList<RectTransform> ItemList { get; private set; }
-    //private LinkedList<RectTransform> itemList = new LinkedList<RectTransform>();
 
     /// <summary>
     /// アイテム表示列数
@@ -58,19 +52,14 @@ public class ScrollViewer : MonoBehaviour
     /// </summary>
     public int ItemsHeight = 110;
 
-    ///// <summary>
-    ///// スクロールによるアンカー位置の調整用
-    ///// </summary>
-    //public float ChangedAnchoredY { get; private set; }
-
     /// <summary>
     /// 下スクロールによって画像更新が行われる際のコールバック
     /// </summary>
-    public Action<int, int, LinkedList<RectTransform>/*float*/> OnUpdateItemsByScrollDown;
+    public Action<int, int, LinkedList<RectTransform>> OnUpdateItemsByScrollDown;
     /// <summary>
     /// 上スクロールによって画像更新が行われる際のコールバック
     /// </summary>
-    public Action<int, int, LinkedList<RectTransform>/*float*/> OnUpdateItemsByScrollUp;
+    public Action<int, int, LinkedList<RectTransform>> OnUpdateItemsByScrollUp;
 
     protected virtual void Awake()
     {
@@ -87,7 +76,6 @@ public class ScrollViewer : MonoBehaviour
         {
             var item = ItemList.ElementAt(i);
             item.GetComponent<Image>().color = Color.white;
-            //if (i > ItemsCount - 1)
             item.gameObject.SetActive(false);
         }
     }
@@ -97,12 +85,12 @@ public class ScrollViewer : MonoBehaviour
         LoopItemsOnUndraw();
     }
 
-    public void Initialize(int viewObjCnt, int itemsCount, List<Sprite> list)//, float y)
+    public void Initialize(int viewObjCnt, int itemsCount, List<Sprite> list)
     {
         maxViewObjectCount = viewObjCnt;
-        startedTopItemAnchoredY = ItemList.First.Value.anchoredPosition.y;//y;
+        startedTopItemAnchoredY = ItemList.First.Value.anchoredPosition.y;
 
-        scrollHeight = Mathf.Max(1, itemsCount / ColumnCount) * ItemsHeight;
+        scrollHeight = Mathf.Max(1, ((itemsCount - 1) / ColumnCount) + 1) * ItemsHeight;
         viewContent.offsetMin = new Vector2(0, -scrollHeight);
 
         for (int i = 0; i < list.Count; ++i)
@@ -131,13 +119,12 @@ public class ScrollViewer : MonoBehaviour
                 topItem.gameObject.SetActive(false);
                 ItemList.RemoveFirst();
                 ItemList.AddLast(topItem);
-                topItem.anchoredPosition = new Vector2(topItem.anchoredPosition.x, //anchoredY);
+                topItem.anchoredPosition = new Vector2(topItem.anchoredPosition.x, 
                     startedTopItemAnchoredY - scrollDiff - ItemsHeight * (maxViewObjectCount / ColumnCount - 1));
             }
 
-            //ChangedAnchoredY = startedTopItemAnchoredY - scrollDiff - ItemsHeight * (maxViewObjectCount / ColumnCount - 1);
             if (OnUpdateItemsByScrollDown != null)
-                OnUpdateItemsByScrollDown(ColumnCount, currentItemRowNo, ItemList/*ChangedAnchoredY*/);
+                OnUpdateItemsByScrollDown(ColumnCount, currentItemRowNo, ItemList);
         }
         // 上スクロール時
         else if(anchoredPosY - scrollDiff < 0 && scrollDiff > 1)
@@ -151,12 +138,11 @@ public class ScrollViewer : MonoBehaviour
                 bottomItem.gameObject.SetActive(false);
                 ItemList.RemoveLast();
                 ItemList.AddFirst(bottomItem);
-                bottomItem.anchoredPosition = new Vector2(bottomItem.anchoredPosition.x, //anchoredY);
+                bottomItem.anchoredPosition = new Vector2(bottomItem.anchoredPosition.x,
                     startedTopItemAnchoredY - scrollDiff);
             }
-            //ChangedAnchoredY = startedTopItemAnchoredY - scrollDiff;
             if(OnUpdateItemsByScrollUp != null)
-                OnUpdateItemsByScrollUp(ColumnCount, currentItemRowNo, ItemList/*ChangedAnchoredY*/);
+                OnUpdateItemsByScrollUp(ColumnCount, currentItemRowNo, ItemList);
         }
     }
 
