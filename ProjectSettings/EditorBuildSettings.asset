@@ -8,13 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/BaseScene.unity
     guid: 9fea197fb2f564b488a95b2d21fafdfb
   - enabled: 1
     path: Assets/Scenes/ColoringPages.unity
     guid: e1dd1f19954044a48bcc0360cd78ec47
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PictureBook.unity
     guid: 8dc6c2b491c9ac34bbc9efa968f0cd9d
   - enabled: 0

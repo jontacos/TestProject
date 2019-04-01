@@ -16,7 +16,7 @@ namespace Jontacos
         public static string GetWriteFolderPath(string texName)
         {
 #if !UNITY_EDITOR
-        return UtilsAndroid.GetExternalStorageFileDirectory() + "/ScreenShots/" + texName + "/";
+            return UtilsAndroid.GetExternalStorageFileDirectory() + "/ScreenShots/" + texName + "/";
 #else
             return Application.streamingAssetsPath + "/" + texName + "/";
 #endif

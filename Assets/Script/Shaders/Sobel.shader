@@ -8,7 +8,7 @@
 	}
 		SubShader
 		{
-			Tags { "RenderType" = "Opaque" }
+			Tags { "RenderType" = "Transparent" }
 
 			Pass
 			{
@@ -115,8 +115,9 @@
 							return fixed4(0, 0, 0, 1);
 					}
 					discard;
-
-					return col;// half4(outlineValue - _OutlineThreshold, 1);
+					//col = fixed4(0, 0, 0, 0);
+					return col;
+					// half4(outlineValue - _OutlineThreshold, 1);
 
 					////// 近隣のテクスチャ色をサンプリング
 					////half diffU = _MainTex_TexelSize.x * _OutlineThick;

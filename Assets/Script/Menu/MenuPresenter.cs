@@ -9,7 +9,7 @@ public class MenuPresenter : MonoBehaviour
     /// <summary>
     /// パレットの移動量
     /// </summary>
-    private static readonly float PULLET_MOVE_Y = 60;
+    private static readonly float PULLET_MOVE_Y = 120;
 
     /// <summary>
     /// パレット移動中かどうか

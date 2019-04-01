@@ -64,36 +64,37 @@ public class ImageScrollModel
     }
 
 
-    /// <summary>
-    /// 保存画像の枚数チェック
-    /// </summary>
-    private void CheckSaveImageNums()
-    {
-#if UNITY_EDITOR
-        var path = Application.streamingAssetsPath;
-#else
-        var path = Application.persistentDataPath + "/ScreenShots/";
-#endif
-        fileNames = Directory.GetFiles(path, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
-        ItemsCount = fileNames.Length;
-    }
+//    /// <summary>
+//    /// 保存画像の枚数チェック
+//    /// </summary>
+//    private void CheckSaveImageNums()
+//    {
+//#if UNITY_EDITOR
+//        var path = Application.streamingAssetsPath;
+//#else
+//        var path = Application.persistentDataPath + "/ScreenShots/";
+//#endif
+//        fileNames = Directory.GetFiles(path, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
+//        ItemsCount = fileNames.Length;
+//    }
 
-    /// <summary>
-    /// 最初にフォルダにある画像枚数分(ViewObjの最大数まで)をロード
-    /// </summary>
-    private void LoadImagesOnInit()
-    {
-        var cnt = Mathf.Min(fileNames.Length, maxViewObjectCount);
-        for (int i = 0; i < cnt; ++i)
-        {
-            var path = fileNames[i];
-            //var tex = Utils.LoadTextureByFileIO(path, 100, 100);
-            var tex = Utils.LoadTextureByWebRequest(path, 100, 100);
-            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
-            sprite.name = Path.GetFileName(path);
-            spriteList.Add(sprite);
-        }
-    }
+//    /// <summary>
+//    /// 最初にフォルダにある画像枚数分(ViewObjの最大数まで)をロード
+//    /// </summary>
+//    private void LoadImagesOnInit()
+//    {
+//        var cnt = Mathf.Min(fileNames.Length, maxViewObjectCount);
+//        for (int i = 0; i < cnt; ++i)
+//        {
+//            var path = fileNames[i];
+//            //var tex = Utils.LoadTextureByFileIO(path, 100, 100);
+//            var tex = Utils.LoadTextureByWebRequest(path, 100, 100);
+//            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+//            sprite.name = Path.GetFileName(path);
+//            spriteList.Add(sprite);
+//        }
+//    }
+
     /// <summary>
     /// スクロールで更新されるアイテム画像のロード
     /// </summary>
