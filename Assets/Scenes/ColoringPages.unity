@@ -1649,7 +1649,7 @@ Transform:
   m_Children:
   - {fileID: 1647620491}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &453596100
 Prefab:
@@ -4198,7 +4198,7 @@ Transform:
   - {fileID: 372881688}
   - {fileID: 50742653}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1152319240
 MonoBehaviour:
@@ -5423,7 +5423,7 @@ Transform:
   m_Children:
   - {fileID: 940585401}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1533412539
 MonoBehaviour:
@@ -5832,7 +5832,7 @@ GameObject:
   - component: {fileID: 1647620489}
   - component: {fileID: 1647620488}
   m_Layer: 0
-  m_Name: in05 (2)
+  m_Name: 05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

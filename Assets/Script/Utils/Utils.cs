@@ -7,6 +7,21 @@ namespace Jontacos
 {
     public static class Utils
     {
+
+        /// <summary>
+        /// 保存パス取得
+        /// </summary>
+        /// <param name="tex"></param>
+        /// <returns></returns>
+        public static string GetWriteFolderPath(string texName)
+        {
+#if !UNITY_EDITOR
+        return UtilsAndroid.GetExternalStorageFileDirectory() + "/ScreenShots/" + texName + "/";
+#else
+            return Application.streamingAssetsPath + "/" + texName + "/";
+#endif
+        }
+
         /// <summary>
         /// IOを利用した直接的なファイルロード(Androidでは不可)
         /// </summary>

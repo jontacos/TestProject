@@ -19,7 +19,7 @@ public class ImageScrollModel
     /// </summary>
     private int maxViewObjectCount;
 
-    private string[] filePaths;
+    private string[] fileNames;
 
     /// <summary>
     /// ロード画像キャッシュ用リスト
@@ -50,13 +50,17 @@ public class ImageScrollModel
     /// </summary>
     private void LoadColoringPagesFromResourcesOnInit()
     {
-        //var path = Application.dataPath + "/Resources";
+        //var path = Application.dataPath + "/Resources/Textures/ColoringPages";
         //Debug.Log(path);
         var sprites = Resources.LoadAll("Textures/ColoringPages", typeof(Sprite));
         ItemsCount = sprites.Length;
 
-        foreach (var spr in sprites)
-            spriteList.Add((Sprite)spr);
+        fileNames = new string[sprites.Length];
+        for (var i = 0; i < ItemsCount; ++i)
+        {
+            spriteList.Add((Sprite)sprites[i]);
+            fileNames[i] = sprites[i].name;
+        }
     }
 
 
@@ -70,8 +74,8 @@ public class ImageScrollModel
 #else
         var path = Application.persistentDataPath + "/ScreenShots/";
 #endif
-        filePaths = Directory.GetFiles(path, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
-        ItemsCount = filePaths.Length;
+        fileNames = Directory.GetFiles(path, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
+        ItemsCount = fileNames.Length;
     }
 
     /// <summary>
@@ -79,10 +83,10 @@ public class ImageScrollModel
     /// </summary>
     private void LoadImagesOnInit()
     {
-        var cnt = Mathf.Min(filePaths.Length, maxViewObjectCount);
+        var cnt = Mathf.Min(fileNames.Length, maxViewObjectCount);
         for (int i = 0; i < cnt; ++i)
         {
-            var path = filePaths[i];
+            var path = fileNames[i];
             //var tex = Utils.LoadTextureByFileIO(path, 100, 100);
             var tex = Utils.LoadTextureByWebRequest(path, 100, 100);
             var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
@@ -113,9 +117,9 @@ public class ImageScrollModel
 
         for (int i = idx; i < idx + columnCnt; ++i)
         {
-            if (i >= filePaths.Length)
+            if (i >= fileNames.Length)
                 break;
-            var path = filePaths[i];
+            var path = fileNames[i];
             var name = Path.GetFileName(path);
             Sprite sprite = spriteList.FirstOrDefault(s => s.name == name);
             if (sprite == null)
