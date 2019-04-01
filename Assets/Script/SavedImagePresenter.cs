@@ -31,8 +31,7 @@ public class SavedImagePresenter : MonoBehaviour
         imagesModel = new ImageScrollModel(items, MAX_VIEW_ITEMS);
 
         viewer.Initialize(MAX_VIEW_ITEMS, imagesModel.ItemsCount, imagesModel.SpriteList);
-        viewer.OnUpdateItemsByScrollDown = OnScrollDown;
-        viewer.OnUpdateItemsByScrollUp = OnScrollUp;
+        viewer.OnUpdateItemsByScroll = OnScroll;
 
         imagesModel.OnUpdateImage = viewer.OnUpdateImage;
     }
@@ -48,20 +47,19 @@ public class SavedImagePresenter : MonoBehaviour
         painter.SetUnPaintable(false);
     }
 
+    /// <summary>
+    /// スクロールで選択されたテクスチャを表示用オブジェクトにセット
+    /// </summary>
+    /// <param name="tex"></param>
     private void SetNodeTexture4EdgeTexture(Texture2D tex)
     {
         painter.SetEdgeTexture(tex);
         Close();
     }
-	
-    private void OnScrollDown(int columnCnt, int currentRow, LinkedList<RectTransform> list)
+
+    private void OnScroll(int columnCnt, int currentRow, bool isScrollDown, LinkedList<RectTransform> list)
     {
-        imagesModel.OnChangeDrawByScrollDown(columnCnt, currentRow, list);
-        Resources.UnloadUnusedAssets();
-    }
-    private void OnScrollUp(int columnCnt, int currentRow, LinkedList<RectTransform> list)
-    {
-        imagesModel.OnChangeDrawByScrollUp(columnCnt, currentRow, list);
+        imagesModel.OnChangeDrawByScroll(columnCnt, currentRow, isScrollDown, list);
         Resources.UnloadUnusedAssets();
     }
 }

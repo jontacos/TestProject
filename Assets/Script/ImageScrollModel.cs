@@ -40,9 +40,25 @@ public class ImageScrollModel
 
     private void Initialize()
     {
-        CheckSaveImageNums();
-        LoadImagesOnInit();
+        //CheckSaveImageNums();
+        //LoadImagesOnInit();
+        LoadColoringPagesFromResourcesOnInit();
     }
+
+    /// <summary>
+    /// お絵描き表示用画像のロード
+    /// </summary>
+    private void LoadColoringPagesFromResourcesOnInit()
+    {
+        //var path = Application.dataPath + "/Resources";
+        //Debug.Log(path);
+        var sprites = Resources.LoadAll("Textures/ColoringPages", typeof(Sprite));
+        ItemsCount = sprites.Length;
+
+        foreach (var spr in sprites)
+            spriteList.Add((Sprite)spr);
+    }
+
 
     /// <summary>
     /// 保存画像の枚数チェック
@@ -54,11 +70,9 @@ public class ImageScrollModel
 #else
         var path = Application.persistentDataPath + "/ScreenShots/";
 #endif
-        Debug.Log("-----------" + path + "~~~~~~~~~~~~~~");
         filePaths = Directory.GetFiles(path, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
         ItemsCount = filePaths.Length;
     }
-
 
     /// <summary>
     /// 最初にフォルダにある画像枚数分(ViewObjの最大数まで)をロード
@@ -79,6 +93,10 @@ public class ImageScrollModel
     /// <summary>
     /// スクロールで更新されるアイテム画像のロード
     /// </summary>
+    /// <param name="columnCnt">表示する列数</param>
+    /// <param name="currentRow">現在表示している一番上の行番号</param>
+    /// <param name="isScrollDown">スクロールダウンでの変化かどうか</param>
+    /// <param name="list">ノード登録リスト</param>
     private void LoadNextRowImages(int columnCnt,int currentRow, bool isScrollDown, LinkedList<RectTransform> list)
     {
         int idx = 0;
@@ -113,13 +131,15 @@ public class ImageScrollModel
                 OnUpdateImage(i - diff, sprite);
         }
     }
-
-    public void OnChangeDrawByScrollDown(int columnCnt, int currentRow, LinkedList<RectTransform> list)
+    /// <summary>
+    /// スクロールでの画像更新
+    /// </summary>
+    /// <param name="columnCnt">表示する列数</param>
+    /// <param name="currentRow">現在表示している一番上の行番号</param>
+    /// <param name="isScrollDown">スクロールダウンでの変化かどうか</param>
+    /// <param name="list">ノード登録リスト</param>
+    public void OnChangeDrawByScroll(int columnCnt, int currentRow, bool isScrollDown, LinkedList<RectTransform> list)
     {
-        LoadNextRowImages(columnCnt, currentRow, true, list);
-    }
-    public void OnChangeDrawByScrollUp(int columnCnt, int currentRow, LinkedList<RectTransform> list)
-    {
-        LoadNextRowImages(columnCnt, currentRow, false, list);
+        LoadNextRowImages(columnCnt, currentRow, isScrollDown, list);
     }
 }

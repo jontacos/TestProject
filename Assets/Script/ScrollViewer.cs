@@ -59,13 +59,9 @@ public class ScrollViewer : MonoBehaviour
 
 
     /// <summary>
-    /// 下スクロールによって画像更新が行われる際のコールバック
+    /// スクロールによって画像更新が行われる際のコールバック
     /// </summary>
-    public Action<int, int, LinkedList<RectTransform>> OnUpdateItemsByScrollDown;
-    /// <summary>
-    /// 上スクロールによって画像更新が行われる際のコールバック
-    /// </summary>
-    public Action<int, int, LinkedList<RectTransform>> OnUpdateItemsByScrollUp;
+    public Action<int, int, bool, LinkedList<RectTransform>> OnUpdateItemsByScroll;
 
     protected void Awake()
     {
@@ -81,12 +77,6 @@ public class ScrollViewer : MonoBehaviour
 
     protected void Start()
     {
-        //for (int i = 0; i < ItemList.Count; ++i)
-        //{
-        //    var item = ItemList.ElementAt(i);
-        //    item.GetComponent<Image>().color = Color.white;
-        //    item.gameObject.SetActive(false);
-        //}
     }
 
     protected void Update()
@@ -94,6 +84,12 @@ public class ScrollViewer : MonoBehaviour
         LoopItemsOnUndraw();
     }
 
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    /// <param name="viewObjCnt">表示に利用するオブジェクトの最大数</param>
+    /// <param name="itemsCount">表示画像の数</param>
+    /// <param name="list">表示画像リスト</param>
     public void Initialize(int viewObjCnt, int itemsCount, List<Sprite> list)
     {
         for (int i = 0; i < ItemList.Count; ++i)
@@ -153,8 +149,8 @@ public class ScrollViewer : MonoBehaviour
                     startedTopItemAnchoredY - scrollDiff - ItemsHeight * (maxViewObjectCount / ColumnCount - 1));
             }
 
-            if (OnUpdateItemsByScrollDown != null)
-                OnUpdateItemsByScrollDown(ColumnCount, currentItemRowNo, ItemList);
+            if (OnUpdateItemsByScroll != null)
+                OnUpdateItemsByScroll(ColumnCount, currentItemRowNo, true, ItemList);
         }
         // 上スクロール時
         else if(anchoredPosY - scrollDiff < 0 && scrollDiff > 1)
@@ -171,8 +167,8 @@ public class ScrollViewer : MonoBehaviour
                 bottomItem.anchoredPosition = new Vector2(bottomItem.anchoredPosition.x,
                     startedTopItemAnchoredY - scrollDiff);
             }
-            if(OnUpdateItemsByScrollUp != null)
-                OnUpdateItemsByScrollUp(ColumnCount, currentItemRowNo, ItemList);
+            if (OnUpdateItemsByScroll != null)
+                OnUpdateItemsByScroll(ColumnCount, currentItemRowNo, false, ItemList);
         }
     }
 
