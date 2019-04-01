@@ -38,11 +38,11 @@ public class EdgeTexture : MonoBehaviour
 
         //var tex = Jontacos.BitmapLoader.Load("E:/Program/TestProject/Assets/Resources/Textures/c0kqmtaw.bmp");
         var tex = Resources.Load<Texture2D>("Textures/ColoringPages/an13");
-        SetTextureSizeByAspect(tex);
+        SetTextureByAspect(tex);
 #endif
     }
 
-    public void SetTextureSizeByAspect(Texture2D tex)
+    public void SetTextureByAspect(Texture2D tex)
     {
         Debug.Log("W:" + tex.width + ", H;" + tex.height);
         var rate = 0f;

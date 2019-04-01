@@ -13,9 +13,19 @@ public class SavedImagePresenter : MonoBehaviour
     [SerializeField]
     private ScrollViewer viewer;
 
+    [SerializeField]
+    private PaintController painter;
+
     private ImageScrollModel imagesModel;
 
-    void Start ()
+    public bool IsOpend { get { return gameObject.activeSelf; } }
+
+    private void Start()
+    {
+        viewer.SetNodeButtonAction(SetNodeTexture4EdgeTexture);
+    }
+
+    public void Initialize()
     {
         var items = viewer.ViewContent.GetComponentsInChildren<CanvasRenderer>().Select(i => i.GetComponent<RectTransform>()).ToArray();
         imagesModel = new ImageScrollModel(items, MAX_VIEW_ITEMS);
@@ -25,6 +35,23 @@ public class SavedImagePresenter : MonoBehaviour
         viewer.OnUpdateItemsByScrollUp = OnScrollUp;
 
         imagesModel.OnUpdateImage = viewer.OnUpdateImage;
+    }
+    public void Open()
+    {
+        painter.SetUnPaintable(true);
+        viewer.ResetScrollerPosition();
+        gameObject.SetActive(true);
+    }
+    public void Close()
+    {
+        gameObject.SetActive(false);
+        painter.SetUnPaintable(false);
+    }
+
+    private void SetNodeTexture4EdgeTexture(Texture2D tex)
+    {
+        painter.SetEdgeTexture(tex);
+        Close();
     }
 	
     private void OnScrollDown(int columnCnt, int currentRow, LinkedList<RectTransform> list)

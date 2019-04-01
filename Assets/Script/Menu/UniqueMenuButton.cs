@@ -6,8 +6,10 @@ using UnityEngine;
 public enum UniqueMenuButtonType
 {
     AllEraze,
-    OpenOrClose,
+    PulletMove,
     Save,
+    ChangeView,
+    OpenScroller,
 }
 
 public class UniqueMenuButton : MenuButtonBase

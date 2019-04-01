@@ -49,9 +49,16 @@ public class ImageScrollModel
     /// </summary>
     private void CheckSaveImageNums()
     {
-        filePaths = Directory.GetFiles(Application.streamingAssetsPath, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
+#if UNITY_EDITOR
+        var path = Application.streamingAssetsPath;
+#else
+        var path = Application.persistentDataPath + "/ScreenShots/";
+#endif
+        Debug.Log("-----------" + path + "~~~~~~~~~~~~~~");
+        filePaths = Directory.GetFiles(path, "*.png", SearchOption.TopDirectoryOnly).OrderBy(f => File.GetCreationTime(f)).ToArray();
         ItemsCount = filePaths.Length;
     }
+
 
     /// <summary>
     /// 最初にフォルダにある画像枚数分(ViewObjの最大数まで)をロード

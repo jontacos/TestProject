@@ -44,7 +44,7 @@ public class AndroidPluginTextureLoad : AndroidPluginReciever
                 tex.filterMode = FilterMode.Trilinear;
                 tex.Apply();
             }
-            EdgeTex.SetTextureSizeByAspect(tex);
+            EdgeTex.SetTextureByAspect(tex);
         }
         else
             Debug.LogError("-----File Dont Exist-----");

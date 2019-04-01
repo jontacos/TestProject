@@ -25,7 +25,9 @@ public class MenuPresenter : MonoBehaviour
     void SetUniqueButtonPush()
     {
         View.SetAllErazeButton(Painter.CreatePage);
-        View.SetOpenOrCloseMenuButton(Painter.OpenOrCloseColorPullet);
+        View.SetPulletOpenOrCloseMenuButton(Painter.OpenOrCloseColorPullet);
         View.SetSaveButton(Painter.OnSaveButton);
+        View.SetChangeViewButton(Painter.OnChangeViewActive);
+        View.SetOpenImageScroller(Painter.OpenImageScroller);
     }
 }

@@ -16,6 +16,12 @@ public class MenuView : MonoBehaviour
     [SerializeField]
     private UniqueMenuButton[] UniqueButtons;
 
+    /// <summary>
+    /// メインメニュー用ボタンの親キャンバス
+    /// </summary>
+    [SerializeField]
+    private GameObject MainMenuButtonCanvas;
+
     void Start ()
     {
         ColorButtons = GetComponentsInChildren<ColorMenuButton>();
@@ -34,14 +40,15 @@ public class MenuView : MonoBehaviour
             sb.OnPush = OnPush;
     }
 
+    #region UniqueButtons
     public void SetAllErazeButton(Action OnPush)
     {
         var btn = GetUniqueButton(UniqueMenuButtonType.AllEraze);
         btn.OnPush = OnPush;
     }
-    public void SetOpenOrCloseMenuButton(Action OnPush)
+    public void SetPulletOpenOrCloseMenuButton(Action OnPush)
     {
-        var btn = GetUniqueButton(UniqueMenuButtonType.OpenOrClose);
+        var btn = GetUniqueButton(UniqueMenuButtonType.PulletMove);
         btn.OnPush = OnPush;
     }
     public void SetSaveButton(Action OnPush)
@@ -49,6 +56,19 @@ public class MenuView : MonoBehaviour
         var btn = GetUniqueButton(UniqueMenuButtonType.Save);
         btn.OnPush = OnPush;
     }
+    public void SetChangeViewButton(Action OnPush)
+    {
+        var btn = GetUniqueButton(UniqueMenuButtonType.ChangeView);
+        btn.OnPush = OnPush;
+        btn.OnPush += () => { MainMenuButtonCanvas.SetActive(!MainMenuButtonCanvas.activeSelf); };
+    }
+    public void SetOpenImageScroller(Action OnPush)
+    {
+        var btn = GetUniqueButton(UniqueMenuButtonType.OpenScroller);
+        btn.OnPush = OnPush;
+    }
+    #endregion
+
     private UniqueMenuButton GetUniqueButton(UniqueMenuButtonType type)
     {
         return UniqueButtons.FirstOrDefault(b => b.ButtonType == type);

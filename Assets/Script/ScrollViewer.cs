@@ -32,9 +32,19 @@ public class ScrollViewer : MonoBehaviour
     private float scrollHeight = 0f;
 
     /// <summary>
+    /// 1つのアイテムの高さ(空きスペース含め)
+    /// </summary>
+    private float ItemsHeight = 110;
+
+    /// <summary>
     /// 初期状態での一番上アイテムのアンカーY値
     /// </summary>
     private float startedTopItemAnchoredY = 0;
+
+    /// <summary>
+    /// スクロールノードボタン
+    /// </summary>
+    private ScrollerNodeButton[] nodeButtons;
 
     /// <summary>
     /// 表示アイテム用リスト
@@ -47,10 +57,6 @@ public class ScrollViewer : MonoBehaviour
     [Range(1, 100)]
     public int ColumnCount = 3;
 
-    /// <summary>
-    /// 1つのアイテムの高さ(空きスペース含め)
-    /// </summary>
-    public int ItemsHeight = 110;
 
     /// <summary>
     /// 下スクロールによって画像更新が行われる際のコールバック
@@ -61,23 +67,26 @@ public class ScrollViewer : MonoBehaviour
     /// </summary>
     public Action<int, int, LinkedList<RectTransform>> OnUpdateItemsByScrollUp;
 
-    protected virtual void Awake()
+    protected void Awake()
     {
         scroll = GetComponent<ScrollRect>();
-        ItemList = new LinkedList<RectTransform>();
+         ItemList = new LinkedList<RectTransform>();
         var items = viewContent.GetComponentsInChildren<CanvasRenderer>().Select(i => i.GetComponent<RectTransform>()).ToArray();
         foreach (var item in items)
             ItemList.AddLast(item);
+        var grid = GetComponentInChildren<GridLayoutGroup>();
+        ItemsHeight = grid.cellSize.y + grid.spacing.y;
+        nodeButtons = GetComponentsInChildren<ScrollerNodeButton>();
     }
 
-    protected virtual void Start()
+    protected void Start()
     {
-        for (int i = 0; i < ItemList.Count; ++i)
-        {
-            var item = ItemList.ElementAt(i);
-            item.GetComponent<Image>().color = Color.white;
-            item.gameObject.SetActive(false);
-        }
+        //for (int i = 0; i < ItemList.Count; ++i)
+        //{
+        //    var item = ItemList.ElementAt(i);
+        //    item.GetComponent<Image>().color = Color.white;
+        //    item.gameObject.SetActive(false);
+        //}
     }
 
     protected void Update()
@@ -87,6 +96,13 @@ public class ScrollViewer : MonoBehaviour
 
     public void Initialize(int viewObjCnt, int itemsCount, List<Sprite> list)
     {
+        for (int i = 0; i < ItemList.Count; ++i)
+        {
+            var item = ItemList.ElementAt(i);
+            item.GetComponent<Image>().color = Color.white;
+            item.gameObject.SetActive(false);
+        }
+
         maxViewObjectCount = viewObjCnt;
         startedTopItemAnchoredY = ItemList.First.Value.anchoredPosition.y;
 
@@ -99,6 +115,20 @@ public class ScrollViewer : MonoBehaviour
             image.sprite = list[i];
             image.gameObject.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// スクロール量のリセット
+    /// </summary>
+    public void ResetScrollerPosition()
+    {
+        scroll.verticalNormalizedPosition = 1;
+    }
+
+    public void SetNodeButtonAction(Action<Texture2D> onPush)
+    {
+        foreach (var b in nodeButtons)
+            b.OnPush = onPush;
     }
 
     /// <summary>

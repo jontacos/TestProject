@@ -8,7 +8,8 @@ using Jontacos;
 
 public class PaintController : MonoBehaviour
 {
-    private static readonly float PULLET_DOWN_Y = -130;
+    private static readonly float PULLET_DOWN_Y = -600;
+    private static readonly float PULLET_UP_Y = PULLET_DOWN_Y + 120;
     private static readonly float CANVAS_TEX_X = 1820;
 
     enum ColorType
@@ -46,13 +47,21 @@ public class PaintController : MonoBehaviour
     }
     private Brush brush;
 
-    public EdgeTexture EdgeTex;
+    [SerializeField]
+    private EdgeTexture EdgeTex;
 
-    public RawImage WriteRawImage;
-    public RawImage ScreenShot;
+    [SerializeField]
+    private RawImage WriteRawImage;
+
+    /// <summary>
+    /// スクショ保存
+    /// </summary>
+    private SaveScreenShot saveScreen;
 
     public GameObject Menus;
     public GameObject ColorPullet;
+
+    public SavedImagePresenter SavedImageScroller;
 
     private Page writePage;
     private bool isOpendColorPullet = true;
@@ -64,16 +73,18 @@ public class PaintController : MonoBehaviour
     void Start ()
     {
         brush = new Brush();
+        saveScreen = new SaveScreenShot();
         prePos = Vector2.zero;
 
         CreatePage();
-        EdgeTex.LoadTexture();
+        SavedImageScroller.Initialize();
+        SavedImageScroller.gameObject.SetActive(false);
     }
 	
 	void Update ()
     {
-        //if (isUnpaintable)
-        //    return;
+        if (isUnpaintable)
+            return;
         // マウス座標をワールド座標からスクリーン座標に変換する
         var mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // マウスクリック
@@ -83,10 +94,38 @@ public class PaintController : MonoBehaviour
             prePos = Vector2.zero;
     }
 
+    /// <summary>
+    /// お絵描き禁止にするならtrue
+    /// </summary>
+    /// <param name="flg"></param>
+    public void SetUnPaintable(bool flg)
+    {
+        isUnpaintable = flg;
+    }
+
+    /// <summary>
+    /// 書き込み用テクスチャの再生成
+    /// </summary>
     public void CreatePage()
     {
         writePage = new Page();
         writePage.SetCanvas(WriteRawImage);
+    }
+
+    /// <summary>
+    /// 保存済み画像をスクロールで表示
+    /// </summary>
+    public void OpenImageScroller()
+    {
+        if (!SavedImageScroller.IsOpend)
+            SavedImageScroller.Open();
+        else
+            SavedImageScroller.Close();
+    }
+
+    public void SetEdgeTexture(Texture2D tex)
+    {
+        EdgeTex.SetTextureByAspect(tex);
     }
 
     /// <summary>
@@ -121,22 +160,9 @@ public class PaintController : MonoBehaviour
         prePos = new Vector2(rx, ry);
     }
 
-    //private void ExpandBrush()
-    //{
-    //    brush.Width += 1;
-    //}
-    //private void ShrinkBrush()
-    //{
-    //    if(brush.Width > 0)
-    //        brush.Width -= 1;
-    //}
     public void ChangeScale(int addScl)
     {
         brush.Width = Mathf.Max(1, brush.Width + addScl);
-        //if (idx > 0)
-        //    ExpandBrush();
-        //else
-        //    ShrinkBrush();
     }
     public void ColorChange(Color col)
     {
@@ -159,24 +185,24 @@ public class PaintController : MonoBehaviour
     }
     private IEnumerator OpenColorPullet(float time)
     {
+        isUnpaintable = true;
         var t = 0f;
-        while(t < time)
+        while (t < time)
         {
-            var y = Utils.EaseOut(PULLET_DOWN_Y, 0, t,time);
+            var y = Utils.EaseOut(PULLET_DOWN_Y, PULLET_UP_Y, t,time);
             ColorPullet.transform.SetLocalPositionY(y);
             t += Time.deltaTime;
             yield return null;
         }
         isMovingPullet = false;
         isOpendColorPullet = false;
-        isUnpaintable = true;
     }
     private IEnumerator CloseColorPullet(float time)
     {
         var t = 0f;
         while (t < time)
         {
-            var y = Utils.EaseOut(0, PULLET_DOWN_Y, t, time);
+            var y = Utils.EaseOut(PULLET_UP_Y, PULLET_DOWN_Y, t, time);
             ColorPullet.transform.SetLocalPositionY(y);
             t += Time.deltaTime;
             yield return null;
@@ -190,92 +216,18 @@ public class PaintController : MonoBehaviour
     {
         StartCoroutine(SaveScreenShot());
     }
-
-    private IEnumerator SaveScreenShot()
-    {
-        Menus.gameObject.SetActive(false);
-
-        yield return new WaitForEndOfFrame();
-        Debug.Log(Screen.width);
-
-        var rate = (float)EdgeTex.Texture.width / EdgeTex.Texture.height;
-        var r = 1820f / 1920f;
-        var height = Screen.height;
-        var width = Mathf.RoundToInt(Screen.height * rate); 
-        var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-        tex.ReadPixels(new Rect((Screen.width * r - width) / 2, 0, width, height), 0, 0);
-        tex.Apply();
-
-        StartCoroutine(WriteFile(tex));
-        yield return null;
-
-        Menus.gameObject.SetActive(true);
-    }
-
-
-    private IEnumerator WriteFile(Texture2D tex)
-    {
-        Debug.Log("WriteFile");
-        var fileName = "Screenshot" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-
-        var path = Application.streamingAssetsPath + "/";
-
-        var bytes = tex.EncodeToPNG();
-#if !UNITY_EDITOR
-        //保存パス取得
-        using (AndroidJavaClass jcEnv = new AndroidJavaClass("android.os.Environment"))
-        using (AndroidJavaObject obj = jcEnv.CallStatic<AndroidJavaObject>("getExternalStoragePublicDirectory", jcEnv.GetStatic<string>("DIRECTORY_PICTURES"/*"DIRECTORY_DCIM"*/ )))
-        {
-            var output = obj.Call<string>("toString");
-            output += "/ScreenShots/" + fileName;
-            //var bytes = tex.GetRawTextureData();
-            path += "SavedScreen.png";
-            File.WriteAllBytes(path/*output*/, bytes);
-            yield return new WaitForEndOfFrame();
-
-            while (!File.Exists(output))
-                yield return new WaitForEndOfFrame();
-
-            Debug.Log("MediaDirWriteFileOK:" + output);
-
-            ScanFile(output, null);
-        }
-#else
-        ScreenShot.rectTransform.offsetMin = EdgeTex.RectTransform.offsetMin;
-        ScreenShot.rectTransform.offsetMax = EdgeTex.RectTransform.offsetMax;
-        ScreenShot.texture = tex; 
-        //ScreenShot.gameObject.SetActive(true);
-
-        Debug.Log(path);
-        File.WriteAllBytes(path + "SavedScreen.png", bytes);
-
-        yield return null;
-#endif
-    }
-
-    //インデックス情報にファイル名を登録する
-    //これをしないとPC から内部ストレージを参照した時にファイルが見えない
-    void ScanFile(string path, string mimeType)
-    {
-        if (Application.platform != RuntimePlatform.Android)
-            return;
-        using (AndroidJavaClass jcUnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        using (AndroidJavaObject joActivity = jcUnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-        using (AndroidJavaObject joContext = joActivity.Call<AndroidJavaObject>("getApplicationContext"))
-        using (AndroidJavaClass jcMediaScannerConnection = new AndroidJavaClass("android.media.MediaScannerConnection"))
-        using (AndroidJavaClass jcEnvironment = new AndroidJavaClass("android.os.Environment"))
-        using (AndroidJavaObject joExDir = jcEnvironment.CallStatic<AndroidJavaObject>("getExternalStorageDirectory"))
-        {
-            Debug.Log("------scanFile:" + path + "--------");
-            var mimeTypes = (mimeType != null) ? new string[] { mimeType } : null;
-            jcMediaScannerConnection.CallStatic("scanFile", joContext, new string[] { path }, mimeTypes, null);
-        }
-        Handheld.StopActivityIndicator();
-    }
-
-
-    public void ChangeActive()
+    public void OnChangeViewActive()
     {
         gameObject.SetActive(!gameObject.activeSelf);
     }
+
+    private IEnumerator SaveScreenShot()
+    {
+        Menus.SetActive(false);
+
+        yield return StartCoroutine(saveScreen.Save(EdgeTex));
+
+        Menus.SetActive(true);
+    }
+
 }
