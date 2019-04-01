@@ -8,9 +8,11 @@ using Jontacos;
 
 public class PaintController : MonoBehaviour
 {
-    private static readonly float PULLET_DOWN_Y = -600;
-    private static readonly float PULLET_UP_Y = PULLET_DOWN_Y + 120;
-    private static readonly float CANVAS_TEX_X = 1820;
+    /// <summary>
+    /// 横1920のとき、書き込みテクスチャのサイズは1820にするので
+    /// その割合を出しておく
+    /// </summary>
+    private static readonly float WRITE_ASPECT_RATIO_X = 1820f / 1920f;
 
     enum ColorType
     {
@@ -59,16 +61,18 @@ public class PaintController : MonoBehaviour
     private SaveScreenShot saveScreen;
 
     public GameObject Menus;
-    public GameObject ColorPullet;
+    //public GameObject ColorPullet;
 
     public SavedImagePresenter SavedImageScroller;
 
     private Page writePage;
-    private bool isOpendColorPullet = true;
-    private bool isMovingPullet = false;
-    private bool isUnpaintable = false;
 
     private Vector2 prePos;
+
+    /// <summary>
+    /// 書き込み不可状態かどうか
+    /// </summary>
+    public bool IsUnpaintable { get; set; }
 
     void Start ()
     {
@@ -83,7 +87,7 @@ public class PaintController : MonoBehaviour
 	
 	void Update ()
     {
-        if (isUnpaintable)
+        if (IsUnpaintable)
             return;
         // マウス座標をワールド座標からスクリーン座標に変換する
         var mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -92,15 +96,6 @@ public class PaintController : MonoBehaviour
             UpdatePixel(UtilTouch.GetTouchPosition());
         else
             prePos = Vector2.zero;
-    }
-
-    /// <summary>
-    /// お絵描き禁止にするならtrue
-    /// </summary>
-    /// <param name="flg"></param>
-    public void SetUnPaintable(bool flg)
-    {
-        isUnpaintable = flg;
     }
 
     /// <summary>
@@ -134,7 +129,7 @@ public class PaintController : MonoBehaviour
     /// <param name="position"></param>
     private void UpdatePixel(Vector2 position)
     {
-        var rx = position.x / (Screen.width * CANVAS_TEX_X / 1920) * writePage.TexWidth;
+        var rx = position.x / (Screen.width * WRITE_ASPECT_RATIO_X) * writePage.TexWidth;
         var ry = position.y / Screen.height * writePage.TexHeight;
 
         if (rx < 0 || rx > writePage.TexWidth || ry < 0 || ry > writePage.TexHeight)
@@ -167,49 +162,6 @@ public class PaintController : MonoBehaviour
     public void ColorChange(Color col)
     {
         brush.UpdateColor(col);
-    }
-
-    /// <summary>
-    /// カラーパレットのON/OFF
-    /// </summary>
-    public void OpenOrCloseColorPullet()
-    {
-        if (isMovingPullet)
-            return;
-
-        isMovingPullet = true;
-        if (isOpendColorPullet)
-            StartCoroutine(OpenColorPullet(0.5f));
-        else
-            StartCoroutine(CloseColorPullet(0.5f));
-    }
-    private IEnumerator OpenColorPullet(float time)
-    {
-        isUnpaintable = true;
-        var t = 0f;
-        while (t < time)
-        {
-            var y = Utils.EaseOut(PULLET_DOWN_Y, PULLET_UP_Y, t,time);
-            ColorPullet.transform.SetLocalPositionY(y);
-            t += Time.deltaTime;
-            yield return null;
-        }
-        isMovingPullet = false;
-        isOpendColorPullet = false;
-    }
-    private IEnumerator CloseColorPullet(float time)
-    {
-        var t = 0f;
-        while (t < time)
-        {
-            var y = Utils.EaseOut(PULLET_UP_Y, PULLET_DOWN_Y, t, time);
-            ColorPullet.transform.SetLocalPositionY(y);
-            t += Time.deltaTime;
-            yield return null;
-        }
-        isMovingPullet = false;
-        isOpendColorPullet = true;
-        isUnpaintable = false;
     }
 
     public void OnSaveButton()

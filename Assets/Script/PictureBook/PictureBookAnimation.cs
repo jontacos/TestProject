@@ -6,38 +6,18 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.U2D.IK;
 
-public class IKAnimationBase : MonoBehaviour
+public class PictureBookAnimation : MonoBehaviour
 {
-    /// <summary>
-    /// 動かすアニメパーツ
-    /// </summary>
-    protected Transform[] animationParts;
-
     private float elapse = 0f;
-    public float Rotate;
-
-    public IKManager2D IKManager;
+    public float Value;
 
     protected virtual void Start ()
     {
-        IKManager = GetComponent<IKManager2D>();
-        animationParts = IKManager.solvers.Select(s => s.transform.GetChild(0)).ToArray();
         TextureLoad();
     }
 	
 	protected virtual void Update ()
     {
-        //elapse += Time.deltaTime;
-        //foreach (var s in solvers)
-        //{
-        //    var child = s.transform.GetChild(0);
-        //    child.transform.SetRotateY(Mathf.Sin(elapse) * 30f);
-        //}
-
-        foreach (var part in animationParts)
-        {
-            part.SetRotateY(Rotate);
-        }
     }
 
     /// <summary>

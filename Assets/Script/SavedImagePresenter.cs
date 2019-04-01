@@ -37,14 +37,14 @@ public class SavedImagePresenter : MonoBehaviour
     }
     public void Open()
     {
-        painter.SetUnPaintable(true);
+        painter.IsUnpaintable = true;
         viewer.ResetScrollerPosition();
         gameObject.SetActive(true);
     }
     public void Close()
     {
         gameObject.SetActive(false);
-        painter.SetUnPaintable(false);
+        painter.IsUnpaintable = false;
     }
 
     /// <summary>

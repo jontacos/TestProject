@@ -22,6 +22,8 @@ public class MenuView : MonoBehaviour
     [SerializeField]
     private GameObject MainMenuButtonCanvas;
 
+
+
     void Start ()
     {
         ColorButtons = GetComponentsInChildren<ColorMenuButton>();
@@ -40,34 +42,39 @@ public class MenuView : MonoBehaviour
             sb.OnPush = OnPush;
     }
 
-    #region UniqueButtons
-    public void SetAllErazeButton(Action OnPush)
+    public void SetUniqueButton(Action OnPush, UniqueMenuButtonType Type)
     {
-        var btn = GetUniqueButton(UniqueMenuButtonType.AllEraze);
+        var btn = GetUniqueButton(Type);
         btn.OnPush = OnPush;
     }
-    public void SetPulletOpenOrCloseMenuButton(Action OnPush)
-    {
-        var btn = GetUniqueButton(UniqueMenuButtonType.PulletMove);
-        btn.OnPush = OnPush;
-    }
-    public void SetSaveButton(Action OnPush)
-    {
-        var btn = GetUniqueButton(UniqueMenuButtonType.Save);
-        btn.OnPush = OnPush;
-    }
-    public void SetChangeViewButton(Action OnPush)
-    {
-        var btn = GetUniqueButton(UniqueMenuButtonType.ChangeView);
-        btn.OnPush = OnPush;
-        btn.OnPush += () => { MainMenuButtonCanvas.SetActive(!MainMenuButtonCanvas.activeSelf); };
-    }
-    public void SetOpenImageScroller(Action OnPush)
-    {
-        var btn = GetUniqueButton(UniqueMenuButtonType.OpenScroller);
-        btn.OnPush = OnPush;
-    }
-    #endregion
+    //#region UniqueButtons
+    //public void SetAllErazeButton(Action OnPush)
+    //{
+    //    var btn = GetUniqueButton(UniqueMenuButtonType.AllEraze);
+    //    btn.OnPush = OnPush;
+    //}
+    //public void SetPulletOpenOrCloseMenuButton(Action OnPush)
+    //{
+    //    var btn = GetUniqueButton(UniqueMenuButtonType.PulletMove);
+    //    btn.OnPush = OnPush;
+    //}
+    //public void SetSaveButton(Action OnPush)
+    //{
+    //    var btn = GetUniqueButton(UniqueMenuButtonType.Save);
+    //    btn.OnPush = OnPush;
+    //}
+    //public void SetChangeViewButton(Action OnPush)
+    //{
+    //    var btn = GetUniqueButton(UniqueMenuButtonType.ChangeView);
+    //    btn.OnPush = OnPush;
+    //    btn.OnPush += () => { MainMenuButtonCanvas.SetActive(!MainMenuButtonCanvas.activeSelf); };
+    //}
+    //public void SetOpenImageScroller(Action OnPush)
+    //{
+    //    var btn = GetUniqueButton(UniqueMenuButtonType.OpenScroller);
+    //    btn.OnPush = OnPush;
+    //}
+    //#endregion
 
     private UniqueMenuButton GetUniqueButton(UniqueMenuButtonType type)
     {
