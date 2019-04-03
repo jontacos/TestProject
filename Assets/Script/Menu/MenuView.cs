@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jontacos;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,11 @@ using UnityEngine.UI;
 
 public class MenuView : MonoBehaviour
 {
+    /// <summary>
+    /// パレットの移動量
+    /// </summary>
+    private static readonly float PULLET_MOVE_Y = 120;
+
     private ColorMenuButton[] ColorButtons;
     private ScaleMenuButton[] ScaleButtons;
 
@@ -22,13 +28,40 @@ public class MenuView : MonoBehaviour
     [SerializeField]
     private GameObject MainMenuButtonCanvas;
 
+    /// <summary>
+    /// 色変更などのパレット並べる用レイアウトグループ
+    /// </summary>
+    [SerializeField]
+    private GameObject ColorPulletParent;
 
+    /// <summary>
+    /// パレット移動用ボタンのテキスト
+    /// </summary>
+    [SerializeField]
+    private Text PulletMoveButtonText;
+
+    private int ColorPulletMoveInHash = Animator.StringToHash("UIColorPulletAnimation");
+    private int ColorPulletMoveOutHash = Animator.StringToHash("ReturnUIColorPulletAnimation");
+
+    /// <summary>
+    /// パレット移動中かどうか
+    /// </summary>
+    private bool isMovingPullet = false;
+
+    /// <summary>
+    /// パレット開いた状態かどうか
+    /// </summary>
+    public bool IsOpendColorPullet { get; private set; }
+
+
+    public Animator ColorPulletAnime;
 
     void Start ()
     {
         ColorButtons = GetComponentsInChildren<ColorMenuButton>();
         ScaleButtons = GetComponentsInChildren<ScaleMenuButton>();
         UniqueButtons = GetComponentsInChildren<UniqueMenuButton>();
+
     }
 
     public void SetColorButtonListener (Action<Color> OnPush)
@@ -47,37 +80,75 @@ public class MenuView : MonoBehaviour
         var btn = GetUniqueButton(Type);
         btn.OnPush = OnPush;
     }
-    //#region UniqueButtons
-    //public void SetAllErazeButton(Action OnPush)
-    //{
-    //    var btn = GetUniqueButton(UniqueMenuButtonType.AllEraze);
-    //    btn.OnPush = OnPush;
-    //}
-    //public void SetPulletOpenOrCloseMenuButton(Action OnPush)
-    //{
-    //    var btn = GetUniqueButton(UniqueMenuButtonType.PulletMove);
-    //    btn.OnPush = OnPush;
-    //}
-    //public void SetSaveButton(Action OnPush)
-    //{
-    //    var btn = GetUniqueButton(UniqueMenuButtonType.Save);
-    //    btn.OnPush = OnPush;
-    //}
-    //public void SetChangeViewButton(Action OnPush)
-    //{
-    //    var btn = GetUniqueButton(UniqueMenuButtonType.ChangeView);
-    //    btn.OnPush = OnPush;
-    //    btn.OnPush += () => { MainMenuButtonCanvas.SetActive(!MainMenuButtonCanvas.activeSelf); };
-    //}
-    //public void SetOpenImageScroller(Action OnPush)
-    //{
-    //    var btn = GetUniqueButton(UniqueMenuButtonType.OpenScroller);
-    //    btn.OnPush = OnPush;
-    //}
-    //#endregion
 
     private UniqueMenuButton GetUniqueButton(UniqueMenuButtonType type)
     {
         return UniqueButtons.FirstOrDefault(b => b.ButtonType == type);
+    }
+
+
+    ///// <summary>
+    ///// カラーパレットのON/OFF
+    ///// </summary>
+    //public IEnumerator OpenOrCloseColorPullet()
+    //{
+    //    if (isMovingPullet)
+    //        yield break;
+
+    //    isMovingPullet = true;
+    //    if (!isOpendColorPullet)
+    //        yield return StartCoroutine(OpenColorPullet(0.5f));
+    //    else
+    //        yield return StartCoroutine(CloseColorPullet(0.5f));
+    //}
+    public IEnumerator OpenColorPullet(float time)
+    {
+        if (isMovingPullet)
+            yield break;
+        isMovingPullet = true;
+        ColorPulletAnime.Play(ColorPulletMoveInHash, 0, 0);
+        //normarizedTimeの0化は1F後におこなわれるので一旦待つ
+        yield return null;
+
+        while (ColorPulletAnime.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
+            yield return null;
+        //var t = 0f;
+        //var start = ColorPulletParent.transform.position.y;
+        //var goal = ColorPulletParent.transform.position.y + PULLET_MOVE_Y;
+        //while (t < time)
+        //{
+        //    int y = (int)Utils.EaseOut(start, goal, t, time);
+        //    ColorPulletParent.transform.SetPositionY(y);
+        //    t += Time.deltaTime;
+        //    yield return null;
+        //}
+        isMovingPullet = false;
+        IsOpendColorPullet = true;
+        PulletMoveButtonText.text = "▽";
+    }
+    public IEnumerator CloseColorPullet(float time)
+    {
+        if (isMovingPullet)
+            yield break;
+        isMovingPullet = true;
+        ColorPulletAnime.Play(ColorPulletMoveOutHash, 0, 0);
+        //normarizedTimeの0化は1F後におこなわれるので一旦待つ
+        yield return null;
+
+        while (ColorPulletAnime.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
+            yield return null;
+        //var t = 0f;
+        //var start = ColorPulletParent.transform.position.y;
+        //var goal = ColorPulletParent.transform.position.y - PULLET_MOVE_Y;
+        //while (t < time)
+        //{
+        //    int y = (int)Utils.EaseOut(start, goal, t, time);
+        //    ColorPulletParent.transform.SetPositionY(y);
+        //    t += Time.deltaTime;
+        //    yield return null;
+        //}
+        isMovingPullet = false;
+        IsOpendColorPullet = false;
+        PulletMoveButtonText.text = "△";
     }
 }
