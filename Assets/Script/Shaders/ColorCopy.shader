@@ -48,8 +48,14 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				fixed4 mainCol = tex2D(_MainTex, i.uv);
+				if (mainCol.a < 0.01f)
+					discard;
+
 				fixed4 col = tex2D(_SourceTex, i.uv);
-				if(col.a < 0.001f)
+				// 一枚も塗り絵を作ってない画像は初期で透過画像が設定されているので
+				// alpha見て作ってないのがわかったら元画像表示
+				if(col.a < 0.01f)
 					col = tex2D(_MainTex, i.uv);
 				return col;
 			}

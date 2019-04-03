@@ -19,7 +19,7 @@ public class MenuPresenter : MonoBehaviour
 	
     void SetColorButtonPush()
     {
-        View.SetColorButtonListener(Painter.ColorChange);
+        View.SetColorButtonListener(OnColorPush);
     }
     void SetScaleButtonPush()
     {
@@ -27,11 +27,22 @@ public class MenuPresenter : MonoBehaviour
     }
     void SetUniqueButtonPush()
     {
-        View.SetUniqueButton(Painter.CreatePage, UniqueMenuButtonType.AllEraze);
+        View.SetUniqueButton(OnAllEraze, UniqueMenuButtonType.AllEraze);
         View.SetUniqueButton(PulletMove, UniqueMenuButtonType.PulletMove);
         View.SetUniqueButton(Painter.OnSaveButton, UniqueMenuButtonType.Save);
         View.SetUniqueButton(Painter.OpenImageScroller, UniqueMenuButtonType.OpenScroller);
         //View.SetUniqueButton(ChangeScene, UniqueMenuButtonType.ChangeView);
+    }
+
+    private void OnColorPush(Color col)
+    {
+        Painter.ColorChange(col);
+        PulletMove();
+    }
+    private void OnAllEraze()
+    {
+        Painter.CreatePage();
+        PulletMove();
     }
 
     private void PulletMove()

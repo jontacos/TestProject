@@ -1278,7 +1278,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000019034489, y: 0.000014470112}
+  m_AnchoredPosition: {x: 0.000019034489, y: 0.000012588989}
   m_SizeDelta: {x: -400, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &249311416
@@ -2816,8 +2816,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 776466880}
   m_HandleRect: {fileID: 776466879}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4440,6 +4440,7 @@ MonoBehaviour:
   MainMenuButtonCanvas: {fileID: 372881687}
   ColorPulletParent: {fileID: 2092393207}
   PulletMoveButtonText: {fileID: 1700616198}
+  ColorPulletAnime: {fileID: 2092393210}
 --- !u!114 &1152319241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6798,6 +6799,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2092393208}
   - component: {fileID: 2092393209}
+  - component: {fileID: 2092393210}
   m_Layer: 0
   m_Name: Colors
   m_TagString: Untagged
@@ -6825,8 +6827,8 @@ RectTransform:
   m_Father: {fileID: 487249342}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.00000031792442, y: 0.000000056514033}
-  m_AnchorMax: {x: 0.99999994, y: 1}
+  m_AnchorMin: {x: 0.58318865, y: -0.093055554}
+  m_AnchorMax: {x: 0.9479094, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -0.000030517578, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6843,16 +6845,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
-    m_Right: 110
+    m_Right: 0
     m_Top: 0
     m_Bottom: -110
-  m_ChildAlignment: 8
+  m_ChildAlignment: 2
   m_StartCorner: 1
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!95 &2092393210
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2092393207}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: de2028f31ed1ffb408fbec380e0287fc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2112278909
 GameObject:
   m_ObjectHideFlags: 0

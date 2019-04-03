@@ -61,7 +61,6 @@ public class MenuView : MonoBehaviour
         ColorButtons = GetComponentsInChildren<ColorMenuButton>();
         ScaleButtons = GetComponentsInChildren<ScaleMenuButton>();
         UniqueButtons = GetComponentsInChildren<UniqueMenuButton>();
-
     }
 
     public void SetColorButtonListener (Action<Color> OnPush)
@@ -87,20 +86,6 @@ public class MenuView : MonoBehaviour
     }
 
 
-    ///// <summary>
-    ///// カラーパレットのON/OFF
-    ///// </summary>
-    //public IEnumerator OpenOrCloseColorPullet()
-    //{
-    //    if (isMovingPullet)
-    //        yield break;
-
-    //    isMovingPullet = true;
-    //    if (!isOpendColorPullet)
-    //        yield return StartCoroutine(OpenColorPullet(0.5f));
-    //    else
-    //        yield return StartCoroutine(CloseColorPullet(0.5f));
-    //}
     public IEnumerator OpenColorPullet(float time)
     {
         if (isMovingPullet)
@@ -112,16 +97,6 @@ public class MenuView : MonoBehaviour
 
         while (ColorPulletAnime.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
             yield return null;
-        //var t = 0f;
-        //var start = ColorPulletParent.transform.position.y;
-        //var goal = ColorPulletParent.transform.position.y + PULLET_MOVE_Y;
-        //while (t < time)
-        //{
-        //    int y = (int)Utils.EaseOut(start, goal, t, time);
-        //    ColorPulletParent.transform.SetPositionY(y);
-        //    t += Time.deltaTime;
-        //    yield return null;
-        //}
         isMovingPullet = false;
         IsOpendColorPullet = true;
         PulletMoveButtonText.text = "▽";
@@ -137,16 +112,6 @@ public class MenuView : MonoBehaviour
 
         while (ColorPulletAnime.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
             yield return null;
-        //var t = 0f;
-        //var start = ColorPulletParent.transform.position.y;
-        //var goal = ColorPulletParent.transform.position.y - PULLET_MOVE_Y;
-        //while (t < time)
-        //{
-        //    int y = (int)Utils.EaseOut(start, goal, t, time);
-        //    ColorPulletParent.transform.SetPositionY(y);
-        //    t += Time.deltaTime;
-        //    yield return null;
-        //}
         isMovingPullet = false;
         IsOpendColorPullet = false;
         PulletMoveButtonText.text = "△";
